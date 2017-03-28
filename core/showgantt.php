@@ -34,5 +34,5 @@ $gan->Save($project);
 //if(isset($noshow))
 //{}
 //else 
-//	header('Location: index.php?project='.$project_name);
+	header('Location: index.php?project='.$project_name);
 ?>

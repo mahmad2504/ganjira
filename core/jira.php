@@ -47,7 +47,7 @@ class Jira
 		//curl_setopt($curl, CURLOPT_HTTPGET, 1);
 		//curl_setopt($curl, CURLOPT_POST, false);
 		curl_setopt_array($curl, array(
-		CURLOPT_USERPWD => 'xxxx' . ':' . 'xxxx',
+		CURLOPT_USERPWD => 'himp' . ':' . 'hmip',
 		CURLOPT_RETURNTRANSFER => true
 		));
 	}
