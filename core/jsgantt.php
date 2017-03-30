@@ -56,7 +56,7 @@ class JSGantt {
 	
 		
 		//// Summary  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		$style = "";
+		$summarystyle = "";
 		$length = 65-($task['level']*3);
 		$pName = substr($task['summary'],0,$length);
 
@@ -65,9 +65,9 @@ class JSGantt {
 			if((strtoupper($task['status']) == "CLOSED") || (strtoupper($task['status']) == "RESOLVED"))
 			{
 				if((strtoupper($task['status_orig']) == "CLOSED") || (strtoupper($task['status_orig']) == "RESOLVED"))
-					$style = "#style=color:lightgrey ";
+					$summarystyle = "#style=color:lightgrey ";
 				else 
-					$style = "";
+					$summarystyle = "";
 			}
 		}
 		else
@@ -75,15 +75,15 @@ class JSGantt {
 			
 			if(strtoupper($task['status_orig']) == "OPEN")
 			{
-				if($task['progress'] > 0)
-					$style = "#style=color:green ";
+				if(($task['progress'] > 0)||($task['timespent']>0))
+					$summarystyle = "#style=color:green ";
 				else
-					$style = "";
+					$summarystyle = "";
 			}
 			else if((strtoupper($task['status_orig']) == "CLOSED") || (strtoupper($task['status_orig']) == "RESOLVED"))
-				$style = "#style=color:lightgrey ";
+				$summarystyle = "#style=color:lightgrey ";
 			else 
-				$style = "#style=color:green ";
+				$summarystyle = "#style=color:green ";
 		}
 		
 		if($task['issuetype'] == "Requirement")
@@ -97,14 +97,14 @@ class JSGantt {
 				$today = strtotime(date('Y-M-d'));
 				$end = strtotime($task['end']);
 				if( $today > $end ) // LaTE
-					$style = "#style=color:red ";
+					$summarystyle = "#style=color:red ";
 				else
-					$style = "#style=color:green ";
+					$summarystyle = "#style=color:green ";
 			}
 			
 		}
 		
-		$pName = $style.$pName;
+		$pName = $summarystyle.$pName;
 		//// Start ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		
@@ -115,6 +115,10 @@ class JSGantt {
 		$style = "";
 		if( (strtoupper($task['status']) != "CLOSED") && (strtoupper($task['status']) != "RESOLVED"))
 		{
+			if(strtotime($task['end_orig']) > 0)
+				$style = "#style=color:green ";
+			
+			
 			$today = strtotime(date('Y-M-d'));
 			$end = strtotime($task['end']);
 			if( $today > $end )
@@ -123,11 +127,12 @@ class JSGantt {
 			if(strtotime($task['end_orig']) > 0)
 			{
 				if   ( strtotime($task['end']) > strtotime($task['end_orig']))
-					$style = "#style=color:red ";
+					$style = "#style=color:orange ";
+					
 			}
 		}
-		
-		
+		else
+			$style = "#style=color:lightgrey ";
 		$pEnd = $style.$pEnd;
 		///////////////////
 		$pMile = 0;
@@ -142,6 +147,8 @@ class JSGantt {
 			else
 				$pComp = "Waiting";
 		}
+		$pComp = $summarystyle.$pComp;
+		
 		////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$pGroup = $task['isparent'];
 		$pParent = $pid;
@@ -190,7 +197,7 @@ class JSGantt {
 		
 		//// Resource ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$pRes = "";
-		$style = "";
+		$style = $summarystyle;
 		if($task['isparent'] == 0)// Non group task
 		{
 			$pRes = $task['assignee'];
@@ -227,6 +234,7 @@ class JSGantt {
 				$pCduration = round($task['timeoriginalestimate']/(8*60*60),1);
 		}
 		
+		$pCduration = $summarystyle.$pCduration;
 		/////////////////////////////////////////////////////////////////////
 		// Original Values //
 		

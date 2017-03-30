@@ -99,7 +99,8 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 		pName = pName.trim();
 		
 	}
-	var vEndColor=vNameColor;//document.createTextNode("");
+	//var vEndColor=vNameColor;//document.createTextNode("");
+	var vEndColor = document.createTextNode("");
 	
 	var tag = pEnd.substring(0,6);
 	if(tag == "#style")
@@ -111,9 +112,10 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 		pEnd = pEnd.replace(style[0], '');
 		pEnd = pEnd.trim();
 	}
-	var vCompColor=vEndColor;//document.createTextNode("");
-	//console.log("end="+vEndColor);
-	vCompColor = vEndColor;
+	
+	//var vCompColor=vEndColor;//document.createTextNode("");
+	//console.log("first="+vEndColor);
+	var vCompColor = document.createTextNode("");
 	var tag = pComp.substring(0,6);
 	if(tag == "#style")
 	{
@@ -126,7 +128,7 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	}
 	//console.log("comp="+vCompColor);
 	var vCdurationColor=document.createTextNode("");
-	vCdurationColor = vNameColor;
+	//vCdurationColor = vNameColor;
 	
 	var tag = pCduration.substring(0,6);
 	if(tag == "#style")
@@ -141,7 +143,7 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	}
 	
 	var vResColor=document.createTextNode("");
-	vResColor = vNameColor;
+	//vResColor = vNameColor;
 	var tag = pRes.substring(0,6);
 	if(tag == "#style")
 	{
@@ -965,7 +967,11 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 					if(vShowDur==1)
 					{
 						vTmpCell=this.newNode(vTmpRow, 'td', null, 'gduration');
-						vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getEstimate()/*vTaskList[i].getDuration(vFormat, vLangs[vLang])*/);
+						var est = vTaskList[i].getEstimate();
+						if(est == 0)
+							vTmpDiv=this.newNode(vTmpCell, 'div', null, null, "");
+						else
+							vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getEstimate()/*vTaskList[i].getDuration(vFormat, vLangs[vLang])*/);
 						vTmpDiv.style.color = vTaskList[i].getDurColor();
 					}
 					if(vShowComp==1)
@@ -977,6 +983,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 						vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getCompStr());
 					
 						vTmpDiv.style.color = vTaskList[i].getCompColor();
+						//console.log("----"+vTmpDiv.style.color);
 						//console.log(vTaskList[i].getCompColor());
 					}
 					if(vShowStartDate==1)
@@ -988,8 +995,9 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 					{
 						vTmpCell=this.newNode(vTmpRow, 'td', null, 'genddate');
 						vTmpDiv=this.newNode(vTmpCell, 'div', null, null, JSGantt.formatDateStr(vTaskList[i].getEnd(), vDateTaskTableDisplayFormat, vLangs[vLang]));
-						vTmpDiv.style.color = vTaskList[i].getNameColor();
+						//vTmpDiv.style.color = vTaskList[i].getNameColor();
 						vTmpDiv.style.color = vTaskList[i].getEndColor();
+						//console.log("end="+vTmpDiv.style.color);
 					}
 					vNumRows++;
 				}
