@@ -897,7 +897,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 			this.setListBody(vTmpDiv2);
 			vTmpTab=this.newNode(vTmpDiv2, 'table', null, 'gtasktable');
 			vTmpTBody=this.newNode(vTmpTab, 'tbody');
-vTaskList.length = 108;
+
 			for(i=0; i<vTaskList.length; i++)
 			{
 				if(vTaskList[i].getGroup()==1) var vBGColor='ggroupitem';
