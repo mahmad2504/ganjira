@@ -31,8 +31,8 @@ $gan = new Gan(GAN_FILE);
 $gan->Save($project);
 //$project->SaveJSGanttXML("gantt\\data");
 //echo "Done";
-//if(isset($noshow))
-//{}
-//else 
+if(isset($noshow))
+{}
+else 
 	header('Location: index.php?project='.$project_name);
 ?>

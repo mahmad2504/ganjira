@@ -1,7 +1,5 @@
 <?php
 require_once('common.php');
-
-
 //echo date("Y-m-d", strtotime(date('Y')."W01"));
 //echo date('Y');
 if(strlen($date)==0)
@@ -25,7 +23,7 @@ $sdate = date('Y-M-d');
 $sdate = new DateTime($sdate);
 $sweek = $sdate->format("W");
 
-$reportlink = "weeklyreport.php?date=".$date;
+$reportlink = "..\\weeklyreport\\".$project_name."?date=".$date;
 
 
 $i = $week>$sweek?intval($week):intval($sweek);
@@ -45,7 +43,10 @@ for($i=$i;$i>0;$i--)
 
 	
 $thisfriday = date('Y-m-d',strtotime('this friday', strtotime( $date)));
-$jsgantt = new JSGantt("gantt\\archive\\".$thisfriday.".xml");
+
+$datafile = 'projects\\'.$project_name.'\\archive\\'.$thisfriday.".xml";
+
+$jsgantt = new JSGantt($datafile);
 $rav = $jsgantt->GetRav();
 
 if (!isset($rows[0]))

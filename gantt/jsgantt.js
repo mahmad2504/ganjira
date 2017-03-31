@@ -897,7 +897,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 			this.setListBody(vTmpDiv2);
 			vTmpTab=this.newNode(vTmpDiv2, 'table', null, 'gtasktable');
 			vTmpTBody=this.newNode(vTmpTab, 'tbody');
-
+vTaskList.length = 108;
 			for(i=0; i<vTaskList.length; i++)
 			{
 				if(vTaskList[i].getGroup()==1) var vBGColor='ggroupitem';
@@ -1095,13 +1095,16 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 
 			while(vTmpDate.getTime()<=vMaxDate.getTime())
 			{
+				
 				vHeaderCellClass='gminorheading';
 				var vCellClass='gtaskcell';
 
 				if(vFormat=='day')
 				{
+					
 					if(vTmpDate.getDay()%6==0)
 					{
+	
 						vHeaderCellClass+='wkend';
 						vCellClass+='wkend';
 					}
@@ -1193,6 +1196,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 			var j=0;
 			for(i=0; i<vTaskList.length; i++)
 			{
+				console.log(i);
 				var curTaskStart=vTaskList[i].getStart();
 				var curTaskEnd=vTaskList[i].getEnd();
 				if ((curTaskEnd.getTime()-(curTaskEnd.getTimezoneOffset()*60000))%(86400000)==0) curTaskEnd=new Date(curTaskEnd.getFullYear(), curTaskEnd.getMonth(), curTaskEnd.getDate()+1, curTaskEnd.getHours(), curTaskEnd.getMinutes(), curTaskEnd.getSeconds()); // add 1 day here to simplify calculations below
@@ -1294,6 +1298,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 						else
 						{
 							vTmpRow=this.newNode(vTmpTBody, 'tr', vDivId+'childrow_'+vID, 'glineitem gitem'+vFormat, null, null, null, ((vTaskList[i].getVisible()==0)? 'none' : null));
+							console.log(vDivId+'childrow_'+vID);
 							vTaskList[i].setChildRow(vTmpRow);
 							JSGantt.addThisRowListeners(this, vTaskList[i].getListChildRow(), vTmpRow);
 							vTmpCell=this.newNode(vTmpRow, 'td', null, 'gtaskcell');
@@ -2608,8 +2613,9 @@ JSGantt.AddXMLTask=function(pGanttVar, pXmlDoc)
 	else
 	{
 		Task=pXmlDoc.getElementsByTagName('task');
+		
+		
 		n=Task.length;
-
 		for(i=0;i<n;i++)
 		{
 			// optional parameters may not have an entry

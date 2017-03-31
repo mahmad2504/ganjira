@@ -7,6 +7,11 @@ class JSGantt {
 	
 	function __construct($filename,$project=null)
 	{
+		if(!file_exists($filename))
+		{
+			echo $filename." does not exist".EOL;
+			
+		}
 		$this->filename = $filename;
 		if($project == null)
 		{
@@ -22,6 +27,7 @@ class JSGantt {
 	}
 	function GetRav()
 	{
+		
 		$xml = simplexml_load_file($this->filename);
 		if($xml->task[0]->pRav)
 			return eval("return ".$xml->task[0]->pRav.";");

@@ -44,6 +44,12 @@ switch($cmd)
 		unlink($filter);
 		include 'core\\buildgantt.php';
 		break;
+	case 'timesheet':
+		include 'core\\timesheet.php';
+		break;
+	case 'weeklyreport':
+		include 'core\\weeklyreport.php';
+		break;
 	default:
 		echo "invalid command".EOL;
 		break;

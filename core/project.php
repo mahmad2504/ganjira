@@ -168,6 +168,38 @@ class Project {
 		return $task['start'];
 	}
 	
+	function AdjustStartEndDates(&$task,$last_end=null)
+	{
+		if($task['isparent'] == 0)
+		{
+			if (($last_end != null) && ($task['timespent']  == 0))
+			{
+				if(strtotime($last_end) > strtotime($task['start']))
+				{
+					echo $task['key']." ".$task['start']." ";
+					$task['start'] = $last_end;
+					$dur = round($task['timeoriginalestimate']/(8*60*60));
+					//echo $task['key']." ".$dur."\n";
+					$end = $this->CompudeEndDate($task['start'],$dur);
+					$task['end'] =  $end;
+
+					echo  $last_end." ".$task['status']." ".$task['end']."<br>";
+				}
+			}
+			if(strtotime($last_end) > strtotime($task['end']. ' + 1 day'))
+				return $last_end;
+			return date('Y-m-d', strtotime($task['end']. ' + 1 day'));
+		}
+		$last_end = null;
+		for($i=0;$i<count($task['children']);$i++)
+		{
+			$ntask = &$task['children'][$i];
+			$last_end  = $this->AdjustStartEndDates($ntask,$last_end);
+		}
+		return null;
+	}
+	
+	
 	function ComputeEstimate(&$task)
 	{
 		$total = 0;
@@ -332,10 +364,14 @@ class Project {
 			$this->ComputeProgress($task);
 			$starts[] = $this->ComputeStart($task);
 			$ends[] = $this->ComputeEnd($task);
+			//$this->ComputeEnd($task);
 			$sta = $this->ComputeStatus($task);
 			if($this->ComputeStatus($task) ==  "IN PROGRESS")
 				$status = "IN PROGRESS";
-				
+			
+			$this->AdjustStartEndDates($task);
+			//$ends[] = $this->ComputeEnd($task);
+
 			//echo $task['acc_timespent']/(8*60*60)."<br>";
 			//if($task['timeoriginalestimate'] > 0)
 			//	$task['progress'] = ($task['timespent']/$task['timeoriginalestimate'])*100;
