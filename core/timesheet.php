@@ -40,10 +40,7 @@ for($i=$i;$i>0;$i--)
 	$weeklist[$i] = date("Y-m-d", strtotime(date('Y').$str));
 
 }
-
-	
 $thisfriday = date('Y-m-d',strtotime('this friday', strtotime( $date)));
-
 $datafile = 'projects\\'.$project_name.'\\archive\\'.$thisfriday.".xml";
 
 $jsgantt = new JSGantt($datafile);

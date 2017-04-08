@@ -1,2 +1,348 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><task><pID>1</pID><pName>#style=color:green Project</pName><pDate>2017-03-31</pDate><pStart>2017-03-22</pStart><pEnd>2017-04-21</pEnd><pMile>0</pMile><pComp>13</pComp><pGroup>1</pGroup><pParent>0</pParent><pOpen>1</pOpen><pDepend/><pNotes/><pCduration>18</pCduration></task><task><pID>2</pID><pName>Serial Driver implementation</pName><pStart>2017-03-22</pStart><pEnd>#style=color:green 2017-04-06</pEnd><pMile>0</pMile><pCduration>9</pCduration><pComp>26</pComp><pGroup>1</pGroup><pParent>1</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8362</pNotes><pOpen>1</pOpen><pClass/><pRes/><pCaption>BSP-8362</pCaption><pStatusO>Open</pStatusO><pEndO>2017-04-06</pEndO><pStartO/><pEstimateO/><pTimeSpentO>0</pTimeSpentO></task><task><pID>3</pID><pName>#style=color:green Serial Init/Open</pName><pStart>2017-03-22</pStart><pEnd>#style=color:red 2017-03-28</pEnd><pMile>0</pMile><pCduration>#style=color:green 1.5</pCduration><pComp>#style=color:green 75</pComp><pGroup>0</pGroup><pParent>2</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8363</pNotes><pOpen>1</pOpen><pClass>gtaskgreen</pClass><pRes>#style=color:green hijaz</pRes><pCaption>BSP-8363</pCaption><pStatusO>In Progress</pStatusO><pEndO>2017-03-28</pEndO><pStartO>2017-03-27</pStartO><pEstimateO>43200</pEstimateO><pTimeSpentO>32400</pTimeSpentO></task><task><pID>4</pID><pName>#style=color:lightgrey Serial De-Init/Close </pName><pStart>2017-03-27</pStart><pEnd>#style=color:lightgrey 2017-03-28</pEnd><pMile>0</pMile><pCduration>#style=color:lightgrey 0.5</pCduration><pComp>#style=color:lightgrey 100</pComp><pGroup>0</pGroup><pParent>2</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8364</pNotes><pOpen>0</pOpen><pClass>gtaskcomplete</pClass><pRes>#style=color:lightgrey hijaz</pRes><pCaption>BSP-8364</pCaption><pStatusO>Resolved</pStatusO><pEndO>2017-03-29</pEndO><pStartO/><pEstimateO>14400</pEstimateO><pTimeSpentO>14400</pTimeSpentO></task><task><pID>5</pID><pName>#style=color:green Serial Read </pName><pStart>2017-03-29</pStart><pEnd>2017-03-29</pEnd><pMile>0</pMile><pCduration>#style=color:green 1</pCduration><pComp>#style=color:green 38</pComp><pGroup>0</pGroup><pParent>2</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8365</pNotes><pOpen>1</pOpen><pClass>gtaskgreen</pClass><pRes>#style=color:green hijaz</pRes><pCaption>BSP-8365</pCaption><pStatusO>In Progress</pStatusO><pEndO/><pStartO/><pEstimateO>28800</pEstimateO><pTimeSpentO>10800</pTimeSpentO></task><task><pID>6</pID><pName>#style=color:green Serial Write </pName><pStart>2017-03-29</pStart><pEnd>2017-03-29</pEnd><pMile>0</pMile><pCduration>#style=color:green 1</pCduration><pComp>#style=color:green 38</pComp><pGroup>0</pGroup><pParent>2</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8366</pNotes><pOpen>1</pOpen><pClass>gtaskgreen</pClass><pRes>#style=color:green hijaz</pRes><pCaption>BSP-8366</pCaption><pStatusO>In Progress</pStatusO><pEndO/><pStartO/><pEstimateO>28800</pEstimateO><pTimeSpentO>10800</pTimeSpentO></task><task><pID>7</pID><pName>CBuffer additions</pName><pStart>2017-03-29</pStart><pEnd>2017-03-30</pEnd><pMile>0</pMile><pCduration>2</pCduration><pComp>0</pComp><pGroup>0</pGroup><pParent>2</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8367</pNotes><pOpen>1</pOpen><pClass>gtaskopen</pClass><pRes>hijaz</pRes><pCaption>BSP-8367</pCaption><pStatusO>Open</pStatusO><pEndO/><pStartO/><pEstimateO>57600</pEstimateO><pTimeSpentO>0</pTimeSpentO></task><task><pID>8</pID><pName>HISR/LISR </pName><pStart>2017-03-29</pStart><pEnd>2017-03-29</pEnd><pMile>0</pMile><pCduration>1</pCduration><pComp>0</pComp><pGroup>0</pGroup><pParent>2</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8368</pNotes><pOpen>1</pOpen><pClass>gtaskopen</pClass><pRes>hijaz</pRes><pCaption>BSP-8368</pCaption><pStatusO>Open</pStatusO><pEndO/><pStartO/><pEstimateO>28800</pEstimateO><pTimeSpentO>0</pTimeSpentO></task><task><pID>9</pID><pName>Final code reviews  </pName><pStart>2017-03-29</pStart><pEnd>2017-03-30</pEnd><pMile>0</pMile><pCduration>2</pCduration><pComp>0</pComp><pGroup>0</pGroup><pParent>2</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8369</pNotes><pOpen>1</pOpen><pClass>gtaskopen</pClass><pRes>hijaz</pRes><pCaption>BSP-8369</pCaption><pStatusO>Open</pStatusO><pEndO/><pStartO/><pEstimateO>57600</pEstimateO><pTimeSpentO>0</pTimeSpentO></task><task><pID>10</pID><pName>Serial Driver testing</pName><pStart>2017-03-29</pStart><pEnd>#style=color:green 2017-04-18</pEnd><pMile>0</pMile><pCduration>7</pCduration><pComp>0</pComp><pGroup>1</pGroup><pParent>1</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8370</pNotes><pOpen>1</pOpen><pClass/><pRes/><pCaption>BSP-8370</pCaption><pStatusO>Open</pStatusO><pEndO>2017-04-18</pEndO><pStartO/><pEstimateO/><pTimeSpentO>0</pTimeSpentO></task><task><pID>11</pID><pName>Testing Basic Open/Close </pName><pStart>2017-03-29</pStart><pEnd>2017-03-29</pEnd><pMile>0</pMile><pCduration>1</pCduration><pComp>0</pComp><pGroup>0</pGroup><pParent>10</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8371</pNotes><pOpen>1</pOpen><pClass>gtaskopen</pClass><pRes>hijaz</pRes><pCaption>BSP-8371</pCaption><pStatusO>Open</pStatusO><pEndO/><pStartO/><pEstimateO>28800</pEstimateO><pTimeSpentO>0</pTimeSpentO></task><task><pID>12</pID><pName>Testing CBuffer implementation separately</pName><pStart>2017-03-29</pStart><pEnd>2017-03-30</pEnd><pMile>0</pMile><pCduration>2</pCduration><pComp>0</pComp><pGroup>0</pGroup><pParent>10</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8372</pNotes><pOpen>1</pOpen><pClass>gtaskopen</pClass><pRes>hijaz</pRes><pCaption>BSP-8372</pCaption><pStatusO>Open</pStatusO><pEndO/><pStartO/><pEstimateO>57600</pEstimateO><pTimeSpentO>0</pTimeSpentO></task><task><pID>13</pID><pName>Testing Serial/Read write mechanism</pName><pStart>2017-03-29</pStart><pEnd>2017-03-29</pEnd><pMile>0</pMile><pCduration>1</pCduration><pComp>0</pComp><pGroup>0</pGroup><pParent>10</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8373</pNotes><pOpen>1</pOpen><pClass>gtaskopen</pClass><pRes>hijaz</pRes><pCaption>BSP-8373</pCaption><pStatusO>Open</pStatusO><pEndO/><pStartO/><pEstimateO>28800</pEstimateO><pTimeSpentO>0</pTimeSpentO></task><task><pID>14</pID><pName>Testing with BSP and DM Interface</pName><pStart>2017-03-29</pStart><pEnd>2017-03-31</pEnd><pMile>0</pMile><pCduration>3</pCduration><pComp>0</pComp><pGroup>0</pGroup><pParent>10</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8374</pNotes><pOpen>1</pOpen><pClass>gtaskopen</pClass><pRes>hijaz</pRes><pCaption>BSP-8374</pCaption><pStatusO>Open</pStatusO><pEndO/><pStartO/><pEstimateO>86400</pEstimateO><pTimeSpentO>0</pTimeSpentO></task><task><pID>15</pID><pName>Documentation</pName><pStart>2017-03-29</pStart><pEnd>#style=color:green 2017-04-21</pEnd><pMile>0</pMile><pCduration>2</pCduration><pComp>0</pComp><pGroup>1</pGroup><pParent>1</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8375</pNotes><pOpen>1</pOpen><pClass/><pRes/><pCaption>BSP-8375</pCaption><pStatusO>Open</pStatusO><pEndO>2017-04-21</pEndO><pStartO/><pEstimateO/><pTimeSpentO>0</pTimeSpentO></task><task><pID>16</pID><pName>Confluence Page + RS_Guide    </pName><pStart>2017-03-29</pStart><pEnd>2017-03-30</pEnd><pMile>0</pMile><pCduration>2</pCduration><pComp>0</pComp><pGroup>0</pGroup><pParent>15</pParent><pDepend/><pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8376</pNotes><pOpen>1</pOpen><pClass>gtaskopen</pClass><pRes>hijaz</pRes><pCaption>BSP-8376</pCaption><pStatusO>Open</pStatusO><pEndO/><pStartO/><pEstimateO>57600</pEstimateO><pTimeSpentO>0</pTimeSpentO></task></project>
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <task>
+    <pID>1</pID>
+    <pName>#style=color:green Project</pName>
+    <pDate>2017-03-31</pDate>
+    <pStart>2017-03-22</pStart>
+    <pEnd>2017-04-21</pEnd>
+    <pMile>0</pMile>
+    <pComp>20</pComp>
+    <pGroup>1</pGroup>
+    <pParent>0</pParent>
+    <pOpen>1</pOpen>
+    <pDepend/>
+    <pNotes/>
+    <pCduration>18</pCduration>
+  </task>
+  <task>
+    <pID>2</pID>
+    <pName>Serial Driver implementation</pName>
+    <pStart>2017-03-22</pStart>
+    <pEnd>#style=color:green 2017-04-06</pEnd>
+    <pMile>0</pMile>
+    <pCduration>9</pCduration>
+    <pComp>40</pComp>
+    <pGroup>1</pGroup>
+    <pParent>1</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8362</pNotes>
+    <pOpen>1</pOpen>
+    <pClass/>
+    <pRes/>
+    <pCaption>BSP-8362</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO>2017-04-06</pEndO>
+    <pStartO/>
+    <pEstimateO/>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>3</pID>
+    <pName>#style=color:green Serial Init/Open</pName>
+    <pStart>2017-03-22</pStart>
+    <pEnd>#style=color:red 2017-03-28</pEnd>
+    <pMile>0</pMile>
+    <pCduration>#style=color:green 1.5</pCduration>
+    <pComp>#style=color:green 75</pComp>
+    <pGroup>0</pGroup>
+    <pParent>2</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8363</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskgreen</pClass>
+    <pRes>#style=color:green hijaz</pRes>
+    <pCaption>BSP-8363</pCaption>
+    <pStatusO>In Progress</pStatusO>
+    <pEndO>2017-03-28</pEndO>
+    <pStartO>2017-03-27</pStartO>
+    <pEstimateO>43200</pEstimateO>
+    <pTimeSpentO>32400</pTimeSpentO>
+  </task>
+  <task>
+    <pID>4</pID>
+    <pName>#style=color:lightgrey Serial De-Init/Close </pName>
+    <pStart>2017-03-27</pStart>
+    <pEnd>#style=color:lightgrey 2017-03-28</pEnd>
+    <pMile>0</pMile>
+    <pCduration>#style=color:lightgrey 0.5</pCduration>
+    <pComp>#style=color:lightgrey 100</pComp>
+    <pGroup>0</pGroup>
+    <pParent>2</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8364</pNotes>
+    <pOpen>0</pOpen>
+    <pClass>gtaskcomplete</pClass>
+    <pRes>#style=color:lightgrey hijaz</pRes>
+    <pCaption>BSP-8364</pCaption>
+    <pStatusO>Resolved</pStatusO>
+    <pEndO>2017-03-29</pEndO>
+    <pStartO/>
+    <pEstimateO>14400</pEstimateO>
+    <pTimeSpentO>14400</pTimeSpentO>
+  </task>
+  <task>
+    <pID>5</pID>
+    <pName>#style=color:green Serial Read </pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-29</pEnd>
+    <pMile>0</pMile>
+    <pCduration>#style=color:green 1</pCduration>
+    <pComp>#style=color:green 38</pComp>
+    <pGroup>0</pGroup>
+    <pParent>2</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8365</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskgreen</pClass>
+    <pRes>#style=color:green hijaz</pRes>
+    <pCaption>BSP-8365</pCaption>
+    <pStatusO>In Progress</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>28800</pEstimateO>
+    <pTimeSpentO>10800</pTimeSpentO>
+  </task>
+  <task>
+    <pID>6</pID>
+    <pName>#style=color:green Serial Write </pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-29</pEnd>
+    <pMile>0</pMile>
+    <pCduration>#style=color:green 1</pCduration>
+    <pComp>#style=color:green 38</pComp>
+    <pGroup>0</pGroup>
+    <pParent>2</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8366</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskgreen</pClass>
+    <pRes>#style=color:green hijaz</pRes>
+    <pCaption>BSP-8366</pCaption>
+    <pStatusO>In Progress</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>28800</pEstimateO>
+    <pTimeSpentO>10800</pTimeSpentO>
+  </task>
+  <task>
+    <pID>7</pID>
+    <pName>CBuffer additions</pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-30</pEnd>
+    <pMile>0</pMile>
+    <pCduration>2</pCduration>
+    <pComp>0</pComp>
+    <pGroup>0</pGroup>
+    <pParent>2</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8367</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskopen</pClass>
+    <pRes>hijaz</pRes>
+    <pCaption>BSP-8367</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>57600</pEstimateO>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>8</pID>
+    <pName>HISR/LISR </pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-29</pEnd>
+    <pMile>0</pMile>
+    <pCduration>1</pCduration>
+    <pComp>0</pComp>
+    <pGroup>0</pGroup>
+    <pParent>2</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8368</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskopen</pClass>
+    <pRes>hijaz</pRes>
+    <pCaption>BSP-8368</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>28800</pEstimateO>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>9</pID>
+    <pName>Final code reviews  </pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-30</pEnd>
+    <pMile>0</pMile>
+    <pCduration>2</pCduration>
+    <pComp>0</pComp>
+    <pGroup>0</pGroup>
+    <pParent>2</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8369</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskopen</pClass>
+    <pRes>hijaz</pRes>
+    <pCaption>BSP-8369</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>57600</pEstimateO>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>10</pID>
+    <pName>Serial Driver testing</pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>#style=color:green 2017-04-18</pEnd>
+    <pMile>0</pMile>
+    <pCduration>7</pCduration>
+    <pComp>0</pComp>
+    <pGroup>1</pGroup>
+    <pParent>1</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8370</pNotes>
+    <pOpen>1</pOpen>
+    <pClass/>
+    <pRes/>
+    <pCaption>BSP-8370</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO>2017-04-18</pEndO>
+    <pStartO/>
+    <pEstimateO/>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>11</pID>
+    <pName>Testing Basic Open/Close </pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-29</pEnd>
+    <pMile>0</pMile>
+    <pCduration>1</pCduration>
+    <pComp>0</pComp>
+    <pGroup>0</pGroup>
+    <pParent>10</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8371</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskopen</pClass>
+    <pRes>hijaz</pRes>
+    <pCaption>BSP-8371</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>28800</pEstimateO>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>12</pID>
+    <pName>Testing CBuffer implementation separately</pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-30</pEnd>
+    <pMile>0</pMile>
+    <pCduration>2</pCduration>
+    <pComp>0</pComp>
+    <pGroup>0</pGroup>
+    <pParent>10</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8372</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskopen</pClass>
+    <pRes>hijaz</pRes>
+    <pCaption>BSP-8372</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>57600</pEstimateO>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>13</pID>
+    <pName>Testing Serial/Read write mechanism</pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-29</pEnd>
+    <pMile>0</pMile>
+    <pCduration>1</pCduration>
+    <pComp>0</pComp>
+    <pGroup>0</pGroup>
+    <pParent>10</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8373</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskopen</pClass>
+    <pRes>hijaz</pRes>
+    <pCaption>BSP-8373</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>28800</pEstimateO>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>14</pID>
+    <pName>Testing with BSP and DM Interface</pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-31</pEnd>
+    <pMile>0</pMile>
+    <pCduration>3</pCduration>
+    <pComp>0</pComp>
+    <pGroup>0</pGroup>
+    <pParent>10</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8374</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskopen</pClass>
+    <pRes>hijaz</pRes>
+    <pCaption>BSP-8374</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>86400</pEstimateO>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>15</pID>
+    <pName>Documentation</pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>#style=color:green 2017-04-21</pEnd>
+    <pMile>0</pMile>
+    <pCduration>2</pCduration>
+    <pComp>0</pComp>
+    <pGroup>1</pGroup>
+    <pParent>1</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8375</pNotes>
+    <pOpen>1</pOpen>
+    <pClass/>
+    <pRes/>
+    <pCaption>BSP-8375</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO>2017-04-21</pEndO>
+    <pStartO/>
+    <pEstimateO/>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+  <task>
+    <pID>16</pID>
+    <pName>Confluence Page + RS_Guide    </pName>
+    <pStart>2017-03-29</pStart>
+    <pEnd>2017-03-30</pEnd>
+    <pMile>0</pMile>
+    <pCduration>2</pCduration>
+    <pComp>0</pComp>
+    <pGroup>0</pGroup>
+    <pParent>15</pParent>
+    <pDepend/>
+    <pNotes>http://jira.alm.mentorg.com:8080/browse/BSP-8376</pNotes>
+    <pOpen>1</pOpen>
+    <pClass>gtaskopen</pClass>
+    <pRes>hijaz</pRes>
+    <pCaption>BSP-8376</pCaption>
+    <pStatusO>Open</pStatusO>
+    <pEndO/>
+    <pStartO/>
+    <pEstimateO>57600</pEstimateO>
+    <pTimeSpentO>0</pTimeSpentO>
+  </task>
+</project>

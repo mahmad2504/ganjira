@@ -87,7 +87,7 @@ a:link, a:visited, a:active {
 <script type="text/javascript">
 <?php
    require_once('../core/pparse.php');
-   $datafile = '"../projects/'.$project.'/gantt.xml?V=1"';
+   $datafile = '"../projects/'.$project.'/gantt?V=1"';
 ?>
     var datafile = <?php echo  $datafile?>;
 	var g = new JSGantt.GanttChart(document.getElementById('GanttChartDIV'), 'day' );

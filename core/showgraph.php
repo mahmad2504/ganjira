@@ -5,6 +5,7 @@
 <title>Ganjira Charts</title>
 <meta content='width=device-width, initial-scale=1' name='viewport'/>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js" type="text/javascript"></script>
+<script src="https://momentjs.com/downloads/moment.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
 function charts(data,mdata,ChartType)
@@ -15,13 +16,15 @@ function charts(data,mdata,ChartType)
 	function drawVisualization() 
 	{
 		var data = new google.visualization.DataTable();
-		data.addColumn('date', 'Data');
+		data.addColumn('string', 'Data');
 		data.addColumn('number', 'Progress');
 		$.each(jsonData, function(i,jsonData)
 		{
 			var value=parseInt(jsonData.y);
-			var name=new Date (jsonData.x);
-			
+			//var name=new Date (jsonData.x);
+			var date = moment(jsonData.x);
+			var name=date.format('W');
+			//var name=jsonData.x;
 			data.addRows([ [name, value] ]);
 		});
 		
@@ -64,7 +67,7 @@ $(document).ready(function ()
 	$options['width'] = 400;
 	$options['height'] = 200;
 	$hAxis = array();
-	$hAxis['title'] =  'Weeks';
+	$hAxis['title'] =  'Week Number';
 	$hAxis['format'] = 'MM/dd';
 	$vAxis = array();
 			

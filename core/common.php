@@ -61,7 +61,8 @@ function trace($type,$log)
 	}
 	
 }
-$date="";
+if(!isset($date))
+	$date="";
 require_once('pparse.php');
 
 ?>

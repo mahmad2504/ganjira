@@ -76,7 +76,7 @@ span.gfoldercollapse		{ color:#000000; cursor:pointer; font-weight:bold; font-si
 .gtaskcomplete				{ float:left; overflow: hidden; }
 
 /* Task complete %age bar */
-.gtaskcomplete				{ height:5px; background-color:#000000; margin-top:4px; opacity:0.4; filter: alpha(opacity=40); }
+.gtaskcomplete				{ height:5px; background-color:#D3D3D3; margin-top:4px; opacity:0.4; filter: alpha(opacity=40); }
 
 
 .gtaskopen			{ height:5px; background-color:#B0E0E6; margin-top:4px; opacity:0.4; filter: alpha(opacity=40); }

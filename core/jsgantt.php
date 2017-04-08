@@ -7,11 +7,6 @@ class JSGantt {
 	
 	function __construct($filename,$project=null)
 	{
-		if(!file_exists($filename))
-		{
-			echo $filename." does not exist".EOL;
-			
-		}
 		$this->filename = $filename;
 		if($project == null)
 		{
@@ -35,7 +30,33 @@ class JSGantt {
 			return 0;
 		
 	}
-	
+	function GetMilestoneTasks()
+	{
+		$ms = array();
+		$xml = simplexml_load_file($this->filename);
+		//$xml->task[0]->pShowMilestone=1;
+		foreach($xml->task as $task)
+		{
+			if($task->pShowMilestone==1)
+			{
+				if(substr( $task->pName, 0, 6 ) == "#style")
+				{
+					$firstpart=explode(" ",$task->pName)[0];
+					$task->pName = str_replace($firstpart, "", (string)$task->pName);
+				}
+				if(substr( $task->pEnd, 0, 6 ) == "#style")
+				{
+					$task->pEnd=explode(" ",$task->pEnd)[1];
+				}
+				//echo  "[".$task->pName.$task->pEnd." ". $task->pEndO.EOL;
+				//$task->pEndO = $task->pEnd;
+				if(strlen($task->pEndO) == 0)
+					$task->pEndO = $task->pEnd;
+				
+				$ms [] = $task;
+			}
+		}return $ms;
+	}
 	function  GetColor($status)
 	{
 		if( strtoupper($status) == "IN PROGRESS")
@@ -58,9 +79,18 @@ class JSGantt {
 	}
 	function TaskJSGanttXML($xml,$task,$id,$pid)
 	{
+		global $milestones;
+		$pShowMilestone=0;
 		$pID=$id;
 	
-		
+		foreach($milestones as $milestone)
+		{
+			if($task['key'] == $milestone)
+			{
+				$pShowMilestone=1;
+				break;
+			}
+		}
 		//// Summary  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$summarystyle = "";
 		$length = 65-($task['level']*3);
@@ -241,6 +271,8 @@ class JSGantt {
 		}
 		
 		$pCduration = $summarystyle.$pCduration;
+		
+		$pStatus = $task['status'];
 		/////////////////////////////////////////////////////////////////////
 		// Original Values //
 		
@@ -252,6 +284,7 @@ class JSGantt {
 		
 		
 		$node = $xml->addChild("task");
+		$node->addChild("pShowMilestone",$pShowMilestone);
 		$node->addChild("pID",$pID);
 		$node->addChild("pName",$pName);
 		$node->addChild("pStart",$pStart);
@@ -269,6 +302,7 @@ class JSGantt {
 		$node->addChild("pClass",$pClass);
 		$node->addChild("pRes",$pRes);
 		$node->addChild("pCaption",$pCaption);
+		$node->addChild("pStatus",$pStatus);
 		$node->addChild("pStatusO",$pStatusO);
 		$node->addChild("pEndO",$pEndO);
 		$node->addChild("pStartO",$pStartO);
@@ -484,6 +518,7 @@ class JSGantt {
 	}
 	function Save($date=null)
 	{
+		global $milestones;
 		if($date == null)
 			$date = date('Y-m-d');
 		
@@ -492,11 +527,21 @@ class JSGantt {
 		
 		$id = 1;
 		$pid = 0;
+		$pShowMilestone=0;
+		
+		foreach($milestones as $milestone)
+		{
+			if(strtolower($milestone)=='project')
+			{
+				$pShowMilestone=1;
+				break;
+			}
+		}
+		
 		$node = $xml->addChild("task");
 		$node->addChild("pID",$id);
-	
 		$color = $this->GetColor($this->project->status);
-		$node->addChild("pName","#style=color:".$color." Project");
+		$node->addChild("pName","#style=color:".$color." ".TITLE);
 		$node->addChild("pDate",$date);
 		$node->addChild("pStart",$this->project->start);
 		
@@ -522,7 +567,7 @@ class JSGantt {
 		$node->addChild("pOpen",1);	
 		$node->addChild("pDepend","");
 		$node->addChild("pNotes","");
-		
+		$node->addChild("pShowMilestone",$pShowMilestone);
 		$node->addChild("pCduration",round($this->project->estimate/(8*60*60)));
 		
 		
@@ -534,7 +579,7 @@ class JSGantt {
 			$ntid = $this->TaskJSGanttXML($xml,$task,$ntid,$id);
 		}
 		$data = $xml->asXML();
-		file_put_contents($this->filename.".xml", $data);
+		file_put_contents($this->filename, $data);
 	}
 }
 ?>

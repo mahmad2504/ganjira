@@ -1,16 +1,15 @@
 /*
-	   _   ___  _____   _  _____ ____   ____
-	  (_) / _ \ \_   \ / ||___  | ___| |___ \
-	  | |/ /_\/  / /\/ | |   / /|___ \   __) |
-	  | / /_\\/\/ /_   | |_ / /_ ___) | / __/
-	 _/ \____/\____/   |_(_)_/(_)____(_)_____|
-	|__/
-	jsGanttImproved 1.7.5.2
-	Copyright (c) 2013-2016, Paul Geldart All rights reserved.
+	   _        ___            _   _    _____                                        _
+	  (_)___   / _ \__ _ _ __ | |_| |_  \_   \_ __ ___  _ __  _ __ _____   _____  __| |
+	  | / __| / /_\/ _` | '_ \| __| __|  / /\/ '_ ` _ \| '_ \| '__/ _ \ \ / / _ \/ _` |
+	  | \__ \/ /_\\ (_| | | | | |_| |_/\/ /_ | | | | | | |_) | | | (_) \ V /  __/ (_| |
+	 _/ |___/\____/\__,_|_| |_|\__|\__\____/ |_| |_| |_| .__/|_|  \___/ \_/ \___|\__,_|
+	|__/                                               |_|
+	jsGanttImproved 1.7.5.3
 
-	The current version of this code can be found at https://code.google.com/p/jsgantt-improved/
+	The current version of this code can be found at https://github.com/jsGanttImproved/jsgantt-improved/
 
-	* Copyright (c) 2013-2016, Paul Geldart.
+	* Copyright (c) 2013-2017, Paul Geldart and Eduardo Rodrigues.
 	* All rights reserved.
 	*
 	* Redistribution and use in source and binary forms, with or without
@@ -20,14 +19,14 @@
 	*     * Redistributions in binary form must reproduce the above copyright
 	*       notice, this list of conditions and the following disclaimer in the
 	*       documentation and/or other materials provided with the distribution.
-	*     * Neither the name of Paul Geldart nor the names of its contributors
+	*     * Neither the name of Paul Geldart and Eduardo Rodrigues nor the names of its contributors
 	*       may be used to endorse or promote products derived from this software
 	*       without specific prior written permission.
 	*
-	* THIS SOFTWARE IS PROVIDED BY PAUL GELDART. ''AS IS'' AND ANY EXPRESS OR
+	* THIS SOFTWARE IS PROVIDED BY PAUL GELDART AND EDUARDO RODRIGUES ''AS IS'' AND ANY EXPRESS OR
 	* IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
 	* OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-	* IN NO EVENT SHALL PAUL GELDART BE LIABLE FOR ANY DIRECT,
+	* IN NO EVENT SHALL PAUL GELDART AND EDUARDO RODRIGUES BE LIABLE FOR ANY DIRECT,
 	* INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
 	* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
 	* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -161,9 +160,8 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	var vImage = document.createTextNode(pImage).data;
 	var vCduration=document.createTextNode(pCduration).data;
 	var vID=parseInt(document.createTextNode(pID).data);
-	
-	
 	var vName=document.createTextNode(pName).data;
+	var vNotesData=document.createTextNode(pNotes).data;
 	var vStart=new Date(0);
 	var vEnd=new Date(0);
 	var vGroupMinStart=null;
@@ -172,7 +170,6 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	var vLink=document.createTextNode(pLink).data;
 	var vMile=parseInt(document.createTextNode(pMile).data);
 	var vRes=document.createTextNode(pRes).data;
-	
 	var vComp=document.createTextNode(pComp).data;
 	if(vComp == 0)
 		vComp = "";
@@ -185,6 +182,7 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	var vDuration='';
 	var vLevel=0;
 	var vNumKid=0;
+	var vWeight=0;
 	var vVisible=1;
 	var vSortIdx=0;
 	var vToDelete=false;
@@ -303,8 +301,8 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	};
 	this.getNotes=function(){return vNotes;};
 	this.getSortIdx=function(){return vSortIdx;};
-	this.getToDelete=function(){return vToDelete;};
-	
+ 	this.getToDelete=function(){return vToDelete;};
+        this.getNotesData=function(){return vNotesData; };
 	this.getDuration=function(pFormat, pLang)
 	{
 		if (vMile)
@@ -346,6 +344,7 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	this.getOpen=function(){return vOpen;};
 	this.getLevel=function(){return vLevel;};
 	this.getNumKids=function(){return vNumKid;};
+	this.getWeight=function(){return vWeight;};
 	this.getStartX=function(){return x1;};
 	this.getStartY=function(){return y1;};
 	this.getEndX=function(){return x2;};
@@ -364,6 +363,7 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	this.setGroupMinEnd=function(pEnd){if(pEnd instanceof Date)vGroupMinEnd=pEnd;};
 	this.setLevel=function(pLevel){vLevel=parseInt(document.createTextNode(pLevel).data);};
 	this.setNumKid=function(pNumKid){vNumKid=parseInt(document.createTextNode(pNumKid).data);};
+	this.setWeight=function(pWeight){vWeight=parseInt(document.createTextNode(pWeight).data);};
 	this.setCompVal=function(pCompVal){vComp=parseFloat(document.createTextNode(pCompVal).data);};
 	this.setStartX=function(pX){x1=parseInt(document.createTextNode(pX).data);};
 	this.setStartY=function(pY){y1=parseInt(document.createTextNode(pY).data);};
@@ -396,7 +396,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 	var vUseRowHlt=1;
 	var vUseToolTip=1;
 	var vUseSort=0;
-	var vUseSingleCell=25000;
+	var vUseSingleCell=250000;
 	var vShowRes=1;
 	var vShowDur=1;
 	var vShowComp=1;
@@ -801,10 +801,26 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 		return -1;
 	};
 
+	this.newANode=function(pParent, pId, pClass, pUrl, pText,pColor, pWidth, pLeft, pDisplay, pColspan)
+	{
+		var vNewNode=pParent.appendChild(document.createElement('a'));
+		
+		vNewNode.setAttribute('href',pUrl);
+		vNewNode.innerHTML = pText;
+		
+		if (pId)vNewNode.id=pId;
+		if (pClass)vNewNode.className=pClass;
+		if (pWidth)vNewNode.style.width=(isNaN(pWidth*1))?pWidth:pWidth+'px';
+		if (pLeft)vNewNode.style.left=(isNaN(pLeft*1))?pLeft:pLeft+'px';
+		//if (pText)vNewNode.appendChild(document.createTextNode(pText));
+		if (pDisplay)vNewNode.style.display=pDisplay;
+		vNewNode.style.color = pColor;
+		if (pColspan)vNewNode.colSpan=pColspan;
+		return vNewNode;
+	};
 	this.newNode=function(pParent, pNodeType, pId, pClass, pText, pWidth, pLeft, pDisplay, pColspan, pAttribs)
 	{
 		var vNewNode=pParent.appendChild(document.createElement(pNodeType));
-		
 		if (pAttribs)
 		{
 			for (var i=0; i+1<pAttribs.length; i+=2)
@@ -817,8 +833,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 		if (pClass)vNewNode.className=pClass;
 		if (pWidth)vNewNode.style.width=(isNaN(pWidth*1))?pWidth:pWidth+'px';
 		if (pLeft)vNewNode.style.left=(isNaN(pLeft*1))?pLeft:pLeft+'px';
-		if (pText) vNewNode.appendChild(document.createTextNode(pText));
-
+		if (pText)vNewNode.appendChild(document.createTextNode(pText));
 		if (pDisplay)vNewNode.style.display=pDisplay;
 		if (pColspan)vNewNode.colSpan=pColspan;
 		return vNewNode;
@@ -850,7 +865,6 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 		if(vTaskList.length>0)
 		{
 			// Process all tasks, reset parent date and completion % if task list has altered
-
 			if (vProcessNeeded)	JSGantt.processRows(vTaskList, 0, -1, 1, 1, this.getUseSort());
 			vProcessNeeded=false;
 
@@ -949,13 +963,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 						vTmpDiv.appendChild(oImg);
 					}
 						vTmpDiv.appendChild(document.createTextNode('\u00A0'+vTaskList[i].getName()));
-						//vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vCellContents+vTaskList[i].getName());
 						vTmpDiv.style.color = vTaskList[i].getNameColor();
-									
-						
-						
-						//getImage
-									
 					}
 
 					if(vShowRes==1)
@@ -983,8 +991,6 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 						vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getCompStr());
 					
 						vTmpDiv.style.color = vTaskList[i].getCompColor();
-						//console.log("----"+vTmpDiv.style.color);
-						//console.log(vTaskList[i].getCompColor());
 					}
 					if(vShowStartDate==1)
 					{
@@ -995,9 +1001,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 					{
 						vTmpCell=this.newNode(vTmpRow, 'td', null, 'genddate');
 						vTmpDiv=this.newNode(vTmpCell, 'div', null, null, JSGantt.formatDateStr(vTaskList[i].getEnd(), vDateTaskTableDisplayFormat, vLangs[vLang]));
-						//vTmpDiv.style.color = vTaskList[i].getNameColor();
 						vTmpDiv.style.color = vTaskList[i].getEndColor();
-						//console.log("end="+vTmpDiv.style.color);
 					}
 					vNumRows++;
 				}
@@ -1095,16 +1099,13 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 
 			while(vTmpDate.getTime()<=vMaxDate.getTime())
 			{
-				
 				vHeaderCellClass='gminorheading';
 				var vCellClass='gtaskcell';
 
 				if(vFormat=='day')
 				{
-					
 					if(vTmpDate.getDay()%6==0)
 					{
-	
 						vHeaderCellClass+='wkend';
 						vCellClass+='wkend';
 					}
@@ -1196,7 +1197,6 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 			var j=0;
 			for(i=0; i<vTaskList.length; i++)
 			{
-				console.log(i);
 				var curTaskStart=vTaskList[i].getStart();
 				var curTaskEnd=vTaskList[i].getEnd();
 				if ((curTaskEnd.getTime()-(curTaskEnd.getTimezoneOffset()*60000))%(86400000)==0) curTaskEnd=new Date(curTaskEnd.getFullYear(), curTaskEnd.getMonth(), curTaskEnd.getDate()+1, curTaskEnd.getHours(), curTaskEnd.getMinutes(), curTaskEnd.getSeconds()); // add 1 day here to simplify calculations below
@@ -1298,7 +1298,6 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 						else
 						{
 							vTmpRow=this.newNode(vTmpTBody, 'tr', vDivId+'childrow_'+vID, 'glineitem gitem'+vFormat, null, null, null, ((vTaskList[i].getVisible()==0)? 'none' : null));
-							console.log(vDivId+'childrow_'+vID);
 							vTaskList[i].setChildRow(vTmpRow);
 							JSGantt.addThisRowListeners(this, vTaskList[i].getListChildRow(), vTmpRow);
 							vTmpCell=this.newNode(vTmpRow, 'td', null, 'gtaskcell');
@@ -1336,7 +1335,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 						case 'Duration': vCaptionStr=vTmpItem.getDuration(vFormat, vLangs[vLang]); break;
 						case 'Complete': vCaptionStr=vTmpItem.getCompStr(); break;
 					}
-					this.newNode(vTmpDiv, 'div', null, vCaptClass, vCaptionStr, 120, (vCaptClass=='gmilecaption')?12:0);
+					this.newANode(vTmpDiv, null, vCaptClass, vTaskList[i].getNotesData(), vCaptionStr, vTaskList[i].getNameColor(),120, (vCaptClass=='gmilecaption')?12:0);
 					vTmpDiv.style.color = vTaskList[i].getNameColor();
 				}
 
@@ -1873,6 +1872,7 @@ JSGantt.processRows=function(pList, pID, pRow, pLevel, pOpen, pUseSort)
 	var vMinSet=0;
 	var vMaxSet=0;
 	var vNumKid=0;
+	var vWeight=0;
 	var vLevel=pLevel;
 	var vList=pList;
 	var vComb=false;
@@ -1905,7 +1905,6 @@ JSGantt.processRows=function(pList, pID, pRow, pLevel, pOpen, pUseSort)
 			}
 
 			pList[i].setLevel(vLevel);
-			vNumKid++;
 
 			if(pList[i].getGroup())
 			{
@@ -1924,13 +1923,14 @@ JSGantt.processRows=function(pList, pID, pRow, pLevel, pOpen, pUseSort)
 				vMaxDate=pList[i].getEnd();
 				vMaxSet=1;
 			}
-			vCompSum+=pList[i].getCompVal();
+
+			vNumKid++;
+			vWeight+=pList[i].getEnd()-pList[i].getStart()+1;
+			vCompSum+=pList[i].getCompVal()*(pList[i].getEnd()-pList[i].getStart()+1);
 			pList[i].setSortIdx(i*pList.length);
 		}
-		//console.log(pID + pList[i].getCompVal());
-	
-		
 	}
+
 	if(pRow>=0)
 	{
 		if(pList[pRow].getGroupMinStart()!=null && pList[pRow].getGroupMinStart()<vMinDate)
@@ -1944,8 +1944,9 @@ JSGantt.processRows=function(pList, pID, pRow, pLevel, pOpen, pUseSort)
 		}
 		pList[pRow].setStart(vMinDate);
 		pList[pRow].setEnd(vMaxDate);
-		//pList[pRow].setNumKid(vNumKid);
-		//pList[pRow].setCompVal(Math.ceil(vCompSum/vNumKid));
+		pList[pRow].setNumKid(vNumKid);
+		//pList[pRow].setWeight(vWeight);
+		//pList[pRow].setCompVal(Math.ceil(vCompSum/vWeight));
 	}
 
 	if (pID==0 && pUseSort==1)
@@ -2613,9 +2614,8 @@ JSGantt.AddXMLTask=function(pGanttVar, pXmlDoc)
 	else
 	{
 		Task=pXmlDoc.getElementsByTagName('task');
-		
-		
 		n=Task.length;
+
 		for(i=0;i<n;i++)
 		{
 			// optional parameters may not have an entry

@@ -118,7 +118,7 @@ class Project {
 			$ntask = &$task['children'][$i];
 			$ends[] = $this->ComputeEnd($ntask);
 		}
-		usort($ends,array( $this, 'datesort' ));	
+		usort($ends,array( $this, 'datesort' ));
 		$task['end'] = $ends[count($ends)-1];
 		
 		//echo $task['key']."-->";
@@ -176,14 +176,14 @@ class Project {
 			{
 				if(strtotime($last_end) > strtotime($task['start']))
 				{
-					echo $task['key']." ".$task['start']." ";
+					//echo $task['key']." ".$task['start']." ";
 					$task['start'] = $last_end;
 					$dur = round($task['timeoriginalestimate']/(8*60*60));
 					//echo $task['key']." ".$dur."\n";
 					$end = $this->CompudeEndDate($task['start'],$dur);
 					$task['end'] =  $end;
 
-					echo  $last_end." ".$task['status']." ".$task['end']."<br>";
+					//echo  $last_end." ".$task['status']." ".$task['end']."<br>";
 				}
 			}
 			if(strtotime($last_end) > strtotime($task['end']. ' + 1 day'))

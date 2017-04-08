@@ -18,7 +18,7 @@ if(isset($path))
 //$params =  explode("/",$url['path']);
 
 //$cmd = $params[2];
-//$project_name = $params[3];
+//$project_name$project_name = $params[3];
 if( !is_dir('projects\\'.$project_name))
 {
 	echo $project_name." does not exist";
@@ -28,6 +28,12 @@ $settings_file = 'projects\\'.$project_name.'\\settings.php';
 
 switch($cmd)
 {
+	case 'dashboard':
+		include 'dashboard\\show.php';
+		break;
+	case 'calendar':
+		include 'calendar\\show.php';
+		break;
 	case 'build':
 		include 'core\\buildgantt.php';
 		break;
@@ -41,7 +47,8 @@ switch($cmd)
 		echo "Rebuilding.....".EOL;
 		flushout();
 		$filter = 'projects\\'.$project_name.'\\filter';
-		unlink($filter);
+		if(file_exists($filter))
+			unlink($filter);
 		include 'core\\buildgantt.php';
 		break;
 	case 'timesheet':

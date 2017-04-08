@@ -8,4 +8,12 @@ define('USERS_WEEKLY_REPORT','');
 define('JIRA_STRUCTURE',607);
 define('PROJECT_LAYOUT',JIRA_STRUCTURE);
 //define('PROJECT_LAYOUT',GAN_FILE);
+
+
+define('TITLE','Neusoft');
+
+$milestones[] = "project";
+$milestones[] = "MEH-2773";
+$milestones[] = "MEH-2772";
+$milestones[] = "MEH-2959";
 ?>

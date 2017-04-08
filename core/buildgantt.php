@@ -29,6 +29,20 @@ $project = new Project($layout,$data);
 $jsgantt = new JSGantt(GANTT_DATA_FILE,$project);
 $jsgantt->Save();
 
+// Update weekend data as well
+
+$day = date('D');
+
+if($day == 'Fri')
+	$friday = date('Y-m-d');
+else
+	$friday =  date('Y-m-d', strtotime('next friday'));
+
+$jsgantt = new JSGantt(ARCHIVE_FOLDER."\\".$friday.".xml",$project);
+$jsgantt->Save($friday);
+
+
+
 // Save Gant file
 $gan = new Gan(GAN_FILE);
 $gan->Save($project);
