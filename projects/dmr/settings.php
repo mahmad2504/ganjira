@@ -12,8 +12,6 @@ define('PROJECT_LAYOUT',JIRA_STRUCTURE);
 define('TITLE','Unified BSP');
 
 
-
-
 //$milestones[] = 'project';
 $milestones[] = 'BSP-8406';
 $milestones[] = 'BSP-8357';

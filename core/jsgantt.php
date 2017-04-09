@@ -30,7 +30,7 @@ class JSGantt {
 			return 0;
 		
 	}
-	function GetMilestoneTasks()
+	/*function GetMilestoneTasks()
 	{
 		$ms = array();
 		$xml = simplexml_load_file($this->filename);
@@ -56,7 +56,7 @@ class JSGantt {
 				$ms [] = $task;
 			}
 		}return $ms;
-	}
+	}*/
 	function  GetColor($status)
 	{
 		if( strtoupper($status) == "IN PROGRESS")

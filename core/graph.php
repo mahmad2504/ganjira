@@ -21,6 +21,37 @@ class Graph {
 		natsort($files); // sort.
 		return $files;
 	}
+	/** 
+	* Counts the number occurrences of a certain day of the week between a start and end date
+	* The $start and $end variables must be in UTC format or you will get the wrong number 
+	* of days  when crossing daylight savings time
+	* @param - $day - the day of the week such as "Monday", "Tuesday"...
+	* @param - $start - a UTC timestamp representing the start date
+	* @param - $end - a UTC timestamp representing the end date
+	* @return Number of occurences of $day between $start and $end
+	*/
+	function CountDays($day, $start, $end)
+	{        
+		$start = strtotime($start);
+		$end = strtotime($end);
+		//get the day of the week for start and end dates (0-6)
+		$w = array(date('w', $start), date('w', $end));
+
+		//get partial week day count
+		if ($w[0] < $w[1])
+		{            
+			$partialWeekCount = ($day >= $w[0] && $day <= $w[1]);
+		}else if ($w[0] == $w[1])
+		{
+			$partialWeekCount = $w[0] == $day;
+		}else
+		{
+			$partialWeekCount = ($day >= $w[0] || $day <= $w[1]);
+		}
+
+		//first count the number of complete weeks, then add 1 if $day falls in a partial week.
+		return floor( ( $end-$start )/60/60/24/7) + $partialWeekCount;
+	}
 	function GetDurationData($milestone)
 	{
 		$data = array();
@@ -35,6 +66,14 @@ class Graph {
 				//$obj->x =  date("m/d", strtotime((string)$xml->task[0]->pDate));
 				$obj->x =  (string)$xml->task[0]->pDate;
 				$obj->y =  (string)$xml->task[0]->pCduration;
+				
+				
+				$obj->z =  (strtotime($xml->task[0]->pEnd) - strtotime($xml->task[0]->pStart))/(60 * 60 * 24);
+				$sats = $this->CountDays('Saturday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
+				$suns = $this->CountDays('Sunday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
+				//echo $sats." ".$suns.EOL;
+				$obj->z = $obj->z - $sats -$suns;
+				
 				$data[]=$obj;
 			}
 			else
@@ -47,6 +86,8 @@ class Graph {
 						//$obj->x =  date("m/d", strtotime((string)$task->pDate));
 						$obj->x =  (string)$xml->task[0]->pDate;
 						$obj->y =  (string)$task->pCduration;
+						$obj->z =  (strtotime($xml->task[0]->pEnd) - strtotime($xml->task[0]->pStart))/(60 * 60 * 24);
+				
 						$data[]=$obj;
 						break;
 					}
@@ -76,6 +117,20 @@ class Graph {
 					$firstpart=explode(" ",$obj->name)[0];
 					$obj->name = str_replace($firstpart, "", (string)$obj->name);
 				}
+				$obj->end = $task->pEnd;
+				if(substr( $task->pEnd, 0, 6 ) == "#style")
+				{
+					$task->pEnd=explode(" ",$task->pEnd)[1];
+					$obj->end = $task->pEnd;
+				}
+				//echo  "[".$task->pName.$task->pEnd." ". $task->pEndO.EOL;
+				//$task->pEndO = $task->pEnd;
+				$obj->endo = $task->pEndO;
+				if(strlen($task->pEndO) == 0)
+				{
+					$obj->endo = $task->pEnd;
+				}
+				$obj->status = $task->pStatus;
 				$tasks[] = $obj;
 				//echo $task->pCaption.EOL;
 				
@@ -83,6 +138,7 @@ class Graph {
 		}
 		return $tasks;
 	}
+	
 	function GetProgressData($milestone)
 	{
 		$data = array();

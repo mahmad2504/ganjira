@@ -217,7 +217,7 @@
 .progressbar-text.top-right {
 	
 	top:5px;
-	right:7px;
+	right:-150px;
 	
 }
 
@@ -228,10 +228,17 @@
 	
 }
 
-.progressbar-text.bottom-right {
+.progressbar-text.bottom-center {
 	
 	bottom:5px;
 	right:7px;
+	
+}
+
+.progressbar-text.bottom-right {
+	
+	bottom:5px;
+	right:-150px;
 	
 }
 
