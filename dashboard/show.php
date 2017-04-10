@@ -241,9 +241,9 @@ function PanelBody($number)
 			break;
 	 }
  }
-function GeneratePanelHtml($number)
+function GeneratePanelHtml($number,$class='col-sm-4')
 {
-	echo '<div class="col-sm-4"> <div class="chart-wrapper"> <div class="chart-title">';
+	echo '<div class="'.$class.'"> <div class="chart-wrapper"> <div class="chart-title">';
 	PanelTitle($number);
 	echo '</div><div class="chart-stage" width="10" >';
 	PanelBody($number);
@@ -289,15 +289,17 @@ function GeneratePanelHtml($number)
 	<div class="container-fluid" >
 	<div class="row">
 		<?php 
-		GeneratePanelHtml(1);
-		GeneratePanelHtml(2);
-		GeneratePanelHtml(3);
+		GeneratePanelHtml(1,'col-sm-3');
+		GeneratePanelHtml(2,'col-sm-3');
+		GeneratePanelHtml(3,'col-sm-3');
+		GeneratePanelHtml(6,'col-sm-3');
 		?>
 	</div>
 	<div class="row">
 		<?php 
 		GeneratePanelHtml(4);
-		GeneratePanelHtml(5);
+		GeneratePanelHtml(5,'col-sm-5');
+		GeneratePanelHtml(7,'col-sm-3');
 		?>
 	</div>
 

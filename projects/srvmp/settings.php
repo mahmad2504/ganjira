@@ -15,6 +15,9 @@ $milestones[] = 'BSP-8362';
 $milestones[] = 'BSP-8370';
 $milestones[] = 'BSP-8375';
 
+
+$project_status = 0;
+
 ?>
 
 

@@ -3,14 +3,17 @@
 //echo __DIR__;
 //echo $project_name;
 if( isset($project_name))
+{
 	require_once('core/pparse.php');
+	require_once('project_settings.php');
+}
 else
+{
 	require_once('../core/pparse.php');
+	require_once('../project_settings.php');
 
-$holidays = array();
+}
 
-$holidays[] = '2017-04-25';
-$holidays[] = '2017-05-01';
 
 
 if($cmd='list')

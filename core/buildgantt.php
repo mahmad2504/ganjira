@@ -1,5 +1,6 @@
 <?php
 require_once('common.php');	
+require_once('project_settings.php');
 
 $filtername=FILTER_NAME;
 $query=QUERY;
@@ -30,17 +31,25 @@ $jsgantt = new JSGantt(GANTT_DATA_FILE,$project);
 $jsgantt->Save();
 
 // Update weekend data as well
+$generate_weekly_data = 1;
+if(isset($project_status))
+{
+	if($project_status == 0)
+		$generate_weekly_data = 0;
+}
+	
 
-$day = date('D');
+if($generate_weekly_data==1)
+{
+	$day = date('D');
+	if($day == 'Fri')
+		$friday = date('Y-m-d');
+	else
+		$friday =  date('Y-m-d', strtotime('next friday'));
 
-if($day == 'Fri')
-	$friday = date('Y-m-d');
-else
-	$friday =  date('Y-m-d', strtotime('next friday'));
-
-$jsgantt = new JSGantt(ARCHIVE_FOLDER."\\".$friday.".xml",$project);
-$jsgantt->Save($friday);
-
+	$jsgantt = new JSGantt(ARCHIVE_FOLDER."\\".$friday.".xml",$project);
+	$jsgantt->Save($friday);
+}
 
 
 // Save Gant file

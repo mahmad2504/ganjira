@@ -1,5 +1,6 @@
 <?php
 require_once('common.php');	
+require_once('project_settings.php');
 
 class Project {
 	private $filter;
@@ -66,20 +67,34 @@ class Project {
 	}
 	function CompudeEndDate($start,$dur)
 	{
-		//echo "start=".$start." duration=".$dur." ";
+		global $holidays;
 		if($dur == 0)
 			return $start;
 		while($dur)
 		{
 			$dayofweek = date('l', strtotime($start));
 			$dayofweek = strtolower(substr($dayofweek,0,3));
-			if(($dayofweek == "sat") || ($dayofweek == "sun")) {}
+			
+			$holday = 0;
+			foreach($holidays as $holiday)
+			{
+				if( strtotime($start) == strtotime($holiday))
+				{
+					$holday = 1;
+					break;
+				}
+			}
+			
+			if(($dayofweek == "sat") || ($dayofweek == "sun") || ($holday==1) ) 
+			{
+				
+			}
 			else
 				$dur--;
 			$start = date('Y-m-d', strtotime($start. ' + 1 day'));
 		}
 		$end = date('Y-m-d', strtotime($start. ' - 1 day'));
-		//echo "end=".$end;
+
 		return $end;
 	}
 	function ComputeEnd(&$task)
@@ -191,11 +206,21 @@ class Project {
 			return date('Y-m-d', strtotime($task['end']. ' + 1 day'));
 		}
 		$last_end = null;
+		$starts = array();
+		$ends = array();
 		for($i=0;$i<count($task['children']);$i++)
 		{
 			$ntask = &$task['children'][$i];
 			$last_end  = $this->AdjustStartEndDates($ntask,$last_end);
+			$starts[] = $ntask['start'];
+			$ends[] = $ntask['end'];
+			//echo $ntask['end'].EOL;
 		}
+		usort($starts,array( $this, 'datesort' ));
+		usort($ends,array( $this, 'datesort' ));
+		$task['start'] = $starts[0];
+		$task['end'] = $ends[count($ends)-1];
+		//echo $task['summary']." ".$task['end'].EOL;
 		return null;
 	}
 	
@@ -362,14 +387,18 @@ class Project {
 			$this->ComputeEstimate($task);
 			$this->ComputeTimeSpent($task);
 			$this->ComputeProgress($task);
-			$starts[] = $this->ComputeStart($task);
-			$ends[] = $this->ComputeEnd($task);
+			$this->ComputeStart($task);
+			$this->ComputeEnd($task);
 			//$this->ComputeEnd($task);
 			$sta = $this->ComputeStatus($task);
 			if($this->ComputeStatus($task) ==  "IN PROGRESS")
 				$status = "IN PROGRESS";
 			
 			$this->AdjustStartEndDates($task);
+			$starts[] = $task['start'];
+			$ends[] = $task['end'];
+			
+			//echo $task['summary']."  ".$task['start']." ".$task['end'].EOL;
 			//$ends[] = $this->ComputeEnd($task);
 
 			//echo $task['acc_timespent']/(8*60*60)."<br>";
@@ -397,6 +426,7 @@ class Project {
 		usort($ends,array( $this, 'datesort' ));
 		$this->start = $starts[0];
 		$this->end = $ends[count($ends)-1];
+		//echo $this->end.EOL;
 		$this->structure = $structure;
 		//echo "Start=".$this->start." est=".$this->estimate." ts=".$this->timespent." p=".$this->progress." end=".$this->end."\n";
 	}

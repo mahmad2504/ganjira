@@ -1,5 +1,6 @@
 <?php
 require_once('common.php');	
+require_once('project_settings.php');	
 
 class Graph {
 	private $directory = "";
@@ -30,8 +31,29 @@ class Graph {
 	* @param - $end - a UTC timestamp representing the end date
 	* @return Number of occurences of $day between $start and $end
 	*/
-	function CountDays($day, $start, $end)
+	static function CountDays($day, $start, $end)
 	{        
+		global $holidays;
+		if(strtolower($day) == "holiday")
+		{
+			$count = 0;
+			foreach($holidays as $holiday)
+			{
+				// Ignore this holiday if falling on sat or sunday
+				$dayofweek = date('l', strtotime($holiday));
+				if(($dayofweek == 'sat')||($dayofweek == 'sun'))
+					continue;
+				
+				// Determine if holiday is falling between start and end day , inclusive 
+				$holiday = strtotime($holiday);
+				$start = strtotime($start);
+				$end = strtotime($end);
+				
+				if(($holiday <= $end) && ($holiday >= $start))
+					$count++;
+			}
+			return $count;
+		}
 		$start = strtotime($start);
 		$end = strtotime($end);
 		//get the day of the week for start and end dates (0-6)
@@ -67,13 +89,14 @@ class Graph {
 				$obj->x =  (string)$xml->task[0]->pDate;
 				$obj->y =  (string)$xml->task[0]->pCduration;
 				
-				
+				//echo $xml->task[0]->pStart."  ".$xml->task[0]->pEnd.EOL;
 				$obj->z =  (strtotime($xml->task[0]->pEnd) - strtotime($xml->task[0]->pStart))/(60 * 60 * 24);
-				$sats = $this->CountDays('Saturday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
-				$suns = $this->CountDays('Sunday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
+				$sats = Graph::CountDays('Saturday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
+				$suns = Graph::CountDays('Sunday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
+				$hols = Graph::CountDays('Holiday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
 				//echo $sats." ".$suns.EOL;
-				$obj->z = $obj->z - $sats -$suns;
-				
+				$obj->z = $obj->z - ($sats + $suns + $hols);
+				//echo $obj->z.EOL;
 				$data[]=$obj;
 			}
 			else
@@ -96,7 +119,32 @@ class Graph {
 		}
 		return json_encode($data);
 	}
-
+	/*
+	function GetResourceUtilization()
+	{
+		$data = array();
+		$files = $this->ReadDirectory($this->directory);
+		foreach($files as $file) 
+		{
+			//echo $file."<br>";
+			$xml = simplexml_load_file($file);
+			foreach($xml->task as $task)
+			{
+				if(strtoupper($milestone) == strtoupper($task->pCaption))
+				{
+					$obj = new Obj();
+					//$obj->x =  date("m/d", strtotime((string)$task->pDate));
+					$obj->x =  (string)$xml->task[0]->pDate;
+					$obj->y =  (string)$task->pCduration;
+					$obj->z =  (strtotime($xml->task[0]->pEnd) - strtotime($xml->task[0]->pStart))/(60 * 60 * 24);
+			
+					$data[]=$obj;
+					break;
+				}
+			}
+		}
+		return json_encode($data);
+	}*/
 	function GetMilestones()
 	{
 		$tasks = array();

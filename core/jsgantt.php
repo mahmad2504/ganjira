@@ -30,33 +30,7 @@ class JSGantt {
 			return 0;
 		
 	}
-	/*function GetMilestoneTasks()
-	{
-		$ms = array();
-		$xml = simplexml_load_file($this->filename);
-		//$xml->task[0]->pShowMilestone=1;
-		foreach($xml->task as $task)
-		{
-			if($task->pShowMilestone==1)
-			{
-				if(substr( $task->pName, 0, 6 ) == "#style")
-				{
-					$firstpart=explode(" ",$task->pName)[0];
-					$task->pName = str_replace($firstpart, "", (string)$task->pName);
-				}
-				if(substr( $task->pEnd, 0, 6 ) == "#style")
-				{
-					$task->pEnd=explode(" ",$task->pEnd)[1];
-				}
-				//echo  "[".$task->pName.$task->pEnd." ". $task->pEndO.EOL;
-				//$task->pEndO = $task->pEnd;
-				if(strlen($task->pEndO) == 0)
-					$task->pEndO = $task->pEnd;
-				
-				$ms [] = $task;
-			}
-		}return $ms;
-	}*/
+	
 	function  GetColor($status)
 	{
 		if( strtoupper($status) == "IN PROGRESS")
