@@ -32,13 +32,16 @@ function DebugLog($log)
 	$traces = debug_backtrace();
 	foreach($traces as $trace)
 	{
-		if($trace['args'][count($trace['args'])-1]=="debug")
+		if(count($trace['args']) > 0)
 		{
-			echo debug_backtrace()[1]['function'];
-			if(is_array($log))
-				print_r($log);
-			else
-				echo "::".$log."\n";
+			if($trace['args'][count($trace['args'])-1]=="debug")
+			{
+				echo debug_backtrace()[1]['function'];
+				if(is_array($log))
+					print_r($log);
+				else
+					echo "::".$log."\n";
+			}
 		}
 	}
 }

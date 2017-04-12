@@ -1,6 +1,7 @@
 <?php
 require_once('core/common.php');
 require_once('core/pparse.php');
+require_once('core/project.php');
 
 $graph = new Graph($project_name);
 $milestones = $graph->GetMilestones();
@@ -9,7 +10,31 @@ if(count($milestones) > 0)
 	$project_progress_data = GetProgressData($project_name,$milestones[0]->key);
 	$project_progress_data->name = $milestones[0]->name;
 }
+$week ="";
+$twtasks = GetWeeklyReport();
 
+function GetWeeklyReport()
+{
+	global $week;
+	$date = date('Y-M-d');
+	$ndate = new DateTime($date);
+	$week = $ndate->format("W");
+
+	$thisfriday = date('Y-M-d',strtotime('this friday', strtotime( $date)));
+
+	$filtername=FILTER_NAME;
+	$query=QUERY;
+	$users=USERS_WEEKLY_REPORT;
+
+
+	$filter = new Filter($filtername,$query);
+
+	if(strlen($users)>0)
+		$twtasks = $filter->GetWeeklyReport($date,$users);
+	else
+		$twtasks = $filter->GetWeeklyReport($date);
+	return $twtasks;
+}
 
 function GetProgressData($project_name,$milestone)
 {
@@ -86,7 +111,8 @@ function PanelTitle($number)
 			echo 'Milestones';
 			break;
 		case '5':
-			echo 'This Week Jira Tasks';
+		    global $week;
+			echo 'Jira Tasks - '.date("y").'W'.$week;
 			break;
 			
 	}	
@@ -202,12 +228,42 @@ function PanelBody($number)
 			echo '<div class="row">';
 			echo '<div class="col-xs-12">';
 			echo '<ul class="demo2">';
-			echo '<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>';
-			echo '<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>';
-			echo '<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>';
-			echo '<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>';
-			echo '<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>';
-			echo '<li class="news-item">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam in venenatis enim... <a href="#">Read more...</a></li>';
+			global $twtasks;
+			$done = array();
+			foreach($twtasks as $twtask)
+			{
+				echo '<li class="news-item">';
+				$jiralink=JIRA_URL."/browse/".$twtask->key;
+				$linktext = '<a style="font-size:90%" href="'.$jiralink.'">'.$twtask->key.'</a>';
+				//echo '<div style="float:left"><div>'.$linktext;
+				echo $linktext;
+				//echo '<span>'."&nbsp&nbsp;&nbsp;&nbsp".$twtask->summary.'</span>';
+				//echo '</div>';
+				echo '<span style="font-size:90%">'."&nbsp&nbsp".$twtask->summary.'</span>';
+				for($i=count($twtask->worklogs)-1;$i>=0;$i--)
+				{
+					$worklog = $twtask->worklogs[$i];
+					if($worklog->thisweek == 1)
+					{
+						$time = explode(":",$worklog->time);
+						$date = new DateTime($worklog->started);
+						$date = $date->format('d M');
+						//echo '<p style="clear:both;">'.$worklog->comment.'</p>';
+						if(isset($done[$worklog->author]))
+						{
+							
+						}
+						else
+						{
+							$userlink=JIRA_URL."/secure/ViewProfile.jspa?name=".$worklog->author;
+							echo '<p align="left" style="font-size:80%"><a href="'.$userlink.'">'.$worklog->displayname.'</a></p>';
+							$done[$worklog->author] = 1;
+						}
+						
+					}
+				}
+				echo '</li>';
+			}
 			echo '</ul>';
 			echo '</div>';
 			echo '</div>';
@@ -390,14 +446,17 @@ function GeneratePanelHtml($number,$class='col-sm-4')
 		{
 			case 'progress':
 				$gdata = $graph->GetProgressData('project');
-				$options['title'] = 'My Project Progress';
+
+				global $project_progress_data;
+
+				//$options['title'] = 'Progress '.(string)$project_progress_data->name;
 				$options['curveType'] = 'function';
 				$vAxis['title'] = 'Progress';
 				$vAxis['format'] = '#\'%\'';
 				break;
 			case 'eac':
 				$gdata = $graph->GetDurationData('project');
-				$options['title'] = 'Estimate at completion';
+				//$options['title'] = 'Estimate at completion';
 				$options['curveType'] = 'function';
 				$vAxis['title'] = 'Man Days';
 				$vAxis['format'] = '0';
@@ -496,7 +555,7 @@ function GeneratePanelHtml($number,$class='col-sm-4')
 		pauseOnHover: true,
 		navigation: false,
 		direction: 'down',
-		newsTickerInterval: 2500,
+		newsTickerInterval: 5000,
 		onToDo: function () {
 			//console.log(this);
 		}
@@ -508,7 +567,7 @@ function GeneratePanelHtml($number,$class='col-sm-4')
 		pauseOnHover: true,
 		navigation: true,
 		direction: 'down',
-		newsTickerInterval: 2500,
+		newsTickerInterval: 5000,
 		onToDo: function () {
 			//console.log(this);
 		}
