@@ -14,6 +14,7 @@ define('TITLE','Unified BSP');
 
 //$milestones[] = 'project';
 $milestones[] = 'BSP-8406';
+$milestones[] = 'BSP-8345';
 $milestones[] = 'BSP-8357';
 $milestones[] = 'BSP-8221';
 $milestones[] = 'BSP-8306';
