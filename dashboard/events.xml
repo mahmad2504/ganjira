@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<monthly>
+
+
+	<event>
+		<id>1</id>
+		<name>XML Events</name>
+		<startdate>2017-1-2</startdate>
+		<enddate>2017-1-2</enddate>
+		<starttime>12:00</starttime>
+		<endtime>2:00</endtime>
+		<color>#ffb128</color>
+		<url></url>
+	</event>
+
+	<event>
+		<id>2</id>
+		<name>Another Event</name>
+		<startdate>2017-2-2</startdate>
+		<enddate>2017-2-2</enddate>
+		<starttime></starttime>
+		<endtime></endtime>
+		<color>#28cbff</color>
+		<url></url>
+	</event>
+
+
+</monthly>
