@@ -12,9 +12,7 @@ define('PROJECT_LAYOUT',JIRA_STRUCTURE);
 
 define('TITLE','Neusoft');
 
-$milestones[] = "project";
-$milestones[] = "MEH-2773";
-$milestones[] = "MEH-2772";
-$milestones[] = "MEH-2959";
-$milestones[] = "MEH-2964";
+$BOARD1 ='project,MEH-2773,MEH-2772,MEH-2996,MEH-2959,MEH-2944';
+$DEFAULT_BOARD = $BOARD1;
+
 ?>

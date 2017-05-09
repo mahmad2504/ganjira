@@ -81,10 +81,8 @@ function IsString(s) {
 	return s.match(/^[a-zA-Z]+$/); 
 }
 
-JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt, pCduration, pImage)
+JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pEndO, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGantt, pCduration, pImage,isparent)
 {
-
-	
 	/////////////////////////////////////////////////////
 	var vNameColor=document.createTextNode("");
 	var tag = pName.substring(0,6);
@@ -164,12 +162,32 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	var vNotesData=document.createTextNode(pNotes).data;
 	var vStart=new Date(0);
 	var vEnd=new Date(0);
+	var vEndO=new Date(0);
+	
 	var vGroupMinStart=null;
 	var vGroupMinEnd=null;
 	var vClass=document.createTextNode(pClass).data;
 	var vLink=document.createTextNode(pLink).data;
 	var vMile=parseInt(document.createTextNode(pMile).data);
+	var isparent =parseInt(document.createTextNode(isparent).data);
+	//console.log(isparent);
 	var vRes=document.createTextNode(pRes).data;
+	if (pEndO!=null && pEndO!='')
+	{
+		if(isparent == 1)
+		{
+			//if(pEnd  != pEndO)
+			{
+				var vGantt=(pGantt instanceof JSGantt.GanttChart)? pGantt : g; //hack for backwards compatibility
+				vEndO  =(pEndO instanceof Date)?pEndO:JSGantt.parseDateStr(document.createTextNode(pEndO).data,vGantt.getDateInputFormat());
+				vEndO = JSGantt.formatDateStr(vEndO, JSGantt.parseDateFormatStr('dd/mm/yyyy'), 'en');
+				var vRes=document.createTextNode(vEndO).data;
+			}
+		}
+		//vEndO = new Date(vEndO.getTime());
+	}
+	//vEndO  =(pEndO instanceof Date)?pEndO:JSGantt.parseDateStr(document.createTextNode(pEndO).data,vGantt.getDateInputFormat());
+	
 	var vComp=document.createTextNode(pComp).data;
 	if(vComp == 0)
 		vComp = "";
@@ -301,7 +319,7 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 	};
 	this.getNotes=function(){return vNotes;};
 	this.getSortIdx=function(){return vSortIdx;};
- 	this.getToDelete=function(){return vToDelete;};
+	this.getToDelete=function(){return vToDelete;};
         this.getNotesData=function(){return vNotesData; };
 	this.getDuration=function(pFormat, pLang)
 	{
@@ -388,6 +406,7 @@ JSGantt.TaskItem=function(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, 
 // pFormat: (required) - used to indicate whether chart should be drawn in "hour", "day", "week", "month", or "quarter" format
 JSGantt.GanttChart=function(pDiv, pFormat)
 {
+	var vCollapse = 0;
 	var vDiv=pDiv;
 	var vFormat=pFormat;
 	var vDivId=null;
@@ -444,7 +463,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 	var vLangs={'en':
 			{'format':'Format','hour':'Hour','day':'Day','week':'Week','month':'Month','quarter':'Quarter','hours':'Hours','days':'Days',
 			 'weeks':'Weeks','months':'Months','quarters':'Quarters','hr':'Hr','dy':'Day','wk':'Wk','mth':'Mth','qtr':'Qtr','hrs':'Hrs',
-			 'dys':'Days','wks':'Wks','mths':'Mths','qtrs':'Qtrs','resource':'Resource','duration':'Man Days','comp':'% Comp.',
+			 'dys':'Days','wks':'Wks','mths':'Mths','qtrs':'Qtrs','resource':'Deadline','duration':'Man Days','comp':'% Comp.',
 			 'completion':'Completion','startdate':'Start Date','enddate':'End Date','moreinfo':'More Information','notes':'Notes',
 			 'january':'January','february':'February','march':'March','april':'April','maylong':'May','june':'June','july':'July',
 			 'august':'August','september':'September','october':'October','november':'November','december':'December','jan':'Jan',
@@ -898,10 +917,10 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 			vTmpRow=this.newNode(vTmpTBody, 'tr');
 			this.newNode(vTmpRow, 'td', null, 'gtasklist', '\u00A0');
 			this.newNode(vTmpRow, 'td', null, 'gtaskname', '\u00A0');
-			if(vShowRes==1)this.newNode(vTmpRow, 'td', null, 'gtaskheading gresource', vLangs[vLang]['resource']);
 			if(vShowDur==1)this.newNode(vTmpRow, 'td', null, 'gtaskheading gduration', vLangs[vLang]['duration']);
 			if(vShowComp==1)this.newNode(vTmpRow, 'td', null, 'gtaskheading gpccomplete', vLangs[vLang]['comp']);
 			if(vShowStartDate==1)this.newNode(vTmpRow, 'td', null, 'gtaskheading gstartdate', vLangs[vLang]['startdate']);
+			if(vShowRes==1)this.newNode(vTmpRow, 'td', null, 'gtaskheading gresource', vLangs[vLang]['resource']);
 			if(vShowEndDate==1)this.newNode(vTmpRow, 'td', null, 'gtaskheading genddate', vLangs[vLang]['enddate']);
 
 			vTmpDiv=this.newNode(vLeftHeader, 'div', null, 'glabelfooter');
@@ -966,12 +985,6 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 						vTmpDiv.style.color = vTaskList[i].getNameColor();
 					}
 
-					if(vShowRes==1)
-					{
-						vTmpCell=this.newNode(vTmpRow, 'td', null, 'gresource');
-						vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
-						vTmpDiv.style.color = vTaskList[i].getResColor();
-					}
 					if(vShowDur==1)
 					{
 						vTmpCell=this.newNode(vTmpRow, 'td', null, 'gduration');
@@ -997,6 +1010,14 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 						vTmpCell=this.newNode(vTmpRow, 'td', null, 'gstartdate');
 						vTmpDiv=this.newNode(vTmpCell, 'div', null, null, JSGantt.formatDateStr(vTaskList[i].getStart(), vDateTaskTableDisplayFormat, vLangs[vLang]));
 					}
+					
+					if(vShowRes==1)
+					{
+						vTmpCell=this.newNode(vTmpRow, 'td', null, 'gresource');
+						vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
+						vTmpDiv.style.color = vTaskList[i].getResColor();
+					}
+					
 					if(vShowEndDate==1)
 					{
 						vTmpCell=this.newNode(vTmpRow, 'td', null, 'genddate');
@@ -1024,7 +1045,7 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 
 			// Draw the Chart Rows
 			var vRightHeader=document.createDocumentFragment();
-			vTmpDiv=this.newNode(vRightHeader, 'div', vDivId+'gcharthead', 'gchartlbl gcontainercol');
+			vTmpDiv=this.newNode(vRightHeader, 'div', vDivId+'gcharthead', 'gchartlbl gcontainercol');		
 			this.setChartHead(vTmpDiv);
 			vTmpTab=this.newNode(vTmpDiv, 'table', vDivId+'chartTableh', 'gcharttableh');
 			vTmpTBody=this.newNode(vTmpTab, 'tbody');
@@ -1039,13 +1060,15 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 
 			var vColSpan=1;
 			// Major Date Header
+		
+		
 			while(vTmpDate.getTime()<=vMaxDate.getTime())
 			{
 				var vHeaderCellClass='gmajorheading';
 				vCellContents='';
 
 				if(vFormat=='day')
-				{
+				{					
 					vTmpCell=this.newNode(vTmpRow, 'td', null, vHeaderCellClass, null, null, null, null, 7);
 					vCellContents+=JSGantt.formatDateStr(vTmpDate,vDayMajorDateDisplayFormat,vLangs[vLang]);
 					vTmpDate.setDate(vTmpDate.getDate()+6);
@@ -1180,7 +1203,6 @@ JSGantt.GanttChart=function(pDiv, pFormat)
 			vTaskLeftPx=(vNumCols *(vColWidth+1))+1;
 
 			if(vUseSingleCell!=0 && vUseSingleCell<(vNumCols*vNumRows))vSingleCell=true;
-
 			this.newNode(vTmpDiv, 'div', null, 'rhscrpad', null, null, vTaskLeftPx+1);
 
 			var vRightTable=document.createDocumentFragment();
@@ -2379,20 +2401,19 @@ JSGantt.parseDateFormatStr=function(pFormatStr)
 	return vDateFormatArray;
 };
 
-JSGantt.parseXML=function(pFile,pGanttVar)
+JSGantt.parseXML=function(pFile,pGanttVar,collapse=-1)
 {
 	if (window.XMLHttpRequest) {
 		var xhttp=new XMLHttpRequest();
 	} else {	// IE 5/6
 		xhttp=new ActiveXObject('Microsoft.XMLHTTP');
 	}
-
 	xhttp.open('GET', pFile, false);
 	xhttp.setRequestHeader('Cache-Control', 'no-cache');
 	xhttp.send(null);
 	var xmlDoc=xhttp.responseXML;
-
-	JSGantt.AddXMLTask(pGanttVar, xmlDoc);
+	pGanttVar.vCollapse = collapse;
+	JSGantt.AddXMLTask(pGanttVar, xmlDoc,collapse);
 };
 
 JSGantt.parseXMLString=function(pStr,pGanttVar)
@@ -2406,7 +2427,7 @@ JSGantt.parseXMLString=function(pStr,pGanttVar)
 		xmlDoc.loadXML(pStr);
 	}
 
-	JSGantt.AddXMLTask(pGanttVar, xmlDoc);
+	JSGantt.AddXMLTask(pGanttVar, xmlDoc,0);
 };
 
 
@@ -2439,7 +2460,7 @@ JSGantt.getXMLNodeValue=function(pRoot,pNodeName,pType,pDefault)
 	return vRetValue;
 };
 
-JSGantt.AddXMLTask=function(pGanttVar, pXmlDoc)
+JSGantt.AddXMLTask=function(pGanttVar, pXmlDoc,collapse)
 {
 	var project='';
 	var vMSP=false;
@@ -2627,6 +2648,7 @@ JSGantt.AddXMLTask=function(pGanttVar, pXmlDoc)
 				pName=JSGantt.getXMLNodeValue(Task[i],'pName',2,'No Task Name');
 				pStart=JSGantt.getXMLNodeValue(Task[i],'pStart',2,'');
 				pEnd=JSGantt.getXMLNodeValue(Task[i],'pEnd',2,'');
+				pEndO=JSGantt.getXMLNodeValue(Task[i],'pEndO',2,'');
 				pLink=JSGantt.getXMLNodeValue(Task[i],'pLink',2,'');
 				pMile=JSGantt.getXMLNodeValue(Task[i],'pMile',1,0);
 				pComp=JSGantt.getXMLNodeValue(Task[i],'pComp',2,0);
@@ -2634,12 +2656,17 @@ JSGantt.AddXMLTask=function(pGanttVar, pXmlDoc)
 				pParent=JSGantt.getXMLNodeValue(Task[i],'pParent',1,0);
 				pRes=JSGantt.getXMLNodeValue(Task[i],'pRes',2,'');
 				pOpen=JSGantt.getXMLNodeValue(Task[i],'pOpen',1,1);
+				pLevel=JSGantt.getXMLNodeValue(Task[i],'pLevel',1,1);
+				if((pLevel>=collapse)&&(collapse >= 0))
+					pOpen=0;
 				pDepend=JSGantt.getXMLNodeValue(Task[i],'pDepend',2,'');
 				pCaption=JSGantt.getXMLNodeValue(Task[i],'pCaption',2,'');
 				pNotes=JSGantt.getXMLNodeValue(Task[i],'pNotes',2,'');
 				pClass=JSGantt.getXMLNodeValue(Task[i],'pClass',2);
 				pCduration=JSGantt.getXMLNodeValue(Task[i],'pCduration',2);
 				pImage=JSGantt.getXMLNodeValue(Task[i],'pImage',2);
+				isparent=JSGantt.getXMLNodeValue(Task[i],'isparent',2);
+				
 				//console.log(pImage);
 				if (typeof pClass=='undefined')
 				{
@@ -2649,7 +2676,7 @@ JSGantt.AddXMLTask=function(pGanttVar, pXmlDoc)
 				}
 
 				// Finally add the task
-				pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID, pName, pStart, pEnd, pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGanttVar,pCduration,pImage));
+				pGanttVar.AddTaskItem(new JSGantt.TaskItem(pID, pName, pStart, pEnd, pEndO,pClass, pLink, pMile, pRes, pComp, pGroup, pParent, pOpen, pDepend, pCaption, pNotes, pGanttVar,pCduration,pImage,isparent));
 			}
 		}
 	}

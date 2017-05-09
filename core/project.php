@@ -11,6 +11,7 @@ class Project {
 	private $start=0;
 	private $status = "RESOLVED";
 	private $end=0;
+	private $oestimate;
 	
 	public function __get($name) 
   	{
@@ -30,6 +31,8 @@ class Project {
 				return $this->status;
 			case 'end':
 				return $this->end;
+			case 'oestimate':
+				return $this->oestimate;
 			default:
 				trace("error","cannot access property ".$name);
 			
@@ -134,7 +137,16 @@ class Project {
 			$ends[] = $this->ComputeEnd($ntask);
 		}
 		usort($ends,array( $this, 'datesort' ));
-		$task['end'] = $ends[count($ends)-1];
+		if( strlen($task['end_orig'])  > 0)
+		{
+			if   ( strtotime($ends[count($ends)-1]) > strtotime($task['end_orig']))
+				$task['end'] = $ends[count($ends)-1];
+		}
+		else
+			$task['end'] = $ends[count($ends)-1];
+			
+	
+		//echo $task['key'].' '.$task['end'].EOL;
 		
 		//echo $task['key']."-->";
 		//foreach($starts as $start)
@@ -156,23 +168,31 @@ class Project {
 			if (count($task['worklogs'])>0)
 			{
 				$task['start'] = $task['worklogs'][0]->started;
-				//echo $task['key']." ".$task['start']."\n";
+				//echo "-->".$task['key']." ".$task['start'].EOL; 
 			}
 			else
 			{
 				if( strlen($task['start']) == 0)
+				{
+					
 					$task['start'] = date("Y-m-d");
+					//echo "-->-->".$task['key']." ".$task['start'].EOL; 
+				}
 			}
+			//echo "-->-->-->".$task['key']." ".$task['start'].EOL; 
 			return $task['start'];
 		}
 		for($i=0;$i<count($task['children']);$i++)
 		{
 			$ntask = &$task['children'][$i];
-			$starts[] = $this->ComputeStart($ntask);
+			$st= $this->ComputeStart($ntask);
+			//echo $ntask['key']." ".$ntask['start'].EOL;
+			$starts[] = $st;
+			
 		}
 		usort($starts,array( $this, 'datesort' ));
 		$task['start'] = $starts[0];
-		
+		//echo $task['key']." ".$task['start'].EOL;
 		//echo $task['key']."-->";
 		//foreach($starts as $start)
 		//	echo $start." ";
@@ -182,19 +202,42 @@ class Project {
 		//return $total;
 		return $task['start'];
 	}
-	
+	function AdjustStartEndDatesNoWorkedTasks(&$task,$start)
+	{
+		if($task['isparent'] == 0)
+		{
+			if (count($task['worklogs']) == 0)
+			{
+				if(($task['status'] == "Resolved")||($task['status'] == "Closed"))
+				{
+					$task['start'] = $start;
+					$task['end'] = $start;
+				}
+			}	
+		}
+		for($i=0;$i<count($task['children']);$i++)
+		{
+			$ntask = &$task['children'][$i];
+			$this->AdjustStartEndDatesNoWorkedTasks($ntask,$task['start']);
+			//$starts[] = $ntask['start'];
+			//$ends[] = $ntask['end'];
+		}
+		
+	}
 	function AdjustStartEndDates(&$task,$last_end=null)
 	{
 		if($task['isparent'] == 0)
 		{
-			if (($last_end != null) && ($task['timespent']  == 0))
+			if (($last_end != null) && ($task['timespent']  == 0) && ($task['status'] != "Resolved") && ($task['status'] !="Closed"))
 			{
 				if(strtotime($last_end) > strtotime($task['start']))
 				{
 					//echo $task['key']." ".$task['start']." ";
 					$task['start'] = $last_end;
 					$dur = round($task['timeoriginalestimate']/(8*60*60));
-					//echo $task['key']." ".$dur."\n";
+					if($dur == 0)
+						$dur = 1;
+					
 					$end = $this->CompudeEndDate($task['start'],$dur);
 					$task['end'] =  $end;
 
@@ -219,11 +262,29 @@ class Project {
 		usort($starts,array( $this, 'datesort' ));
 		usort($ends,array( $this, 'datesort' ));
 		$task['start'] = $starts[0];
-		$task['end'] = $ends[count($ends)-1];
+		if( strlen($task['end_orig'])  > 0)
+		{
+			if   ( strtotime($ends[count($ends)-1]) > strtotime($task['end_orig']))
+				$task['end'] = $ends[count($ends)-1];
+		}
+		else
+			$task['end'] = $ends[count($ends)-1];
+		
+		//$task['end'] = $ends[count($ends)-1];
 		//echo $task['summary']." ".$task['end'].EOL;
 		return null;
 	}
-	
+	function ComputeLevel(&$task,$level)
+	{
+		$task['level'] = $level;
+		if($task['isparent'] == 0)
+			return;
+		for($i=0;$i<count($task['children']);$i++)
+		{
+			$ntask = &$task['children'][$i];
+			$this->ComputeLevel($ntask,$level+1);
+		}
+	}
 	
 	function ComputeEstimate(&$task)
 	{
@@ -246,8 +307,30 @@ class Project {
 			
 			if(($task['status'] == "Resolved")||($task['status'] == "Closed"))
 			{
+				//echo "E ".$task['key']." ".$task['timespent'].EOL;
 				if($task['timespent'] == 0)
-					$task['noestimate'] =  1;
+				{
+					// Assume estimated time is spent and engineer did not bother to update time logs 
+					$task['timespent']  = $task['timeoriginalestimate'];
+					//echo $task['key']." ".$task['timeoriginalestimate']/(60*60*8).EOL;
+					$task['worklogs'] = array();
+					$obj = new Obj();
+					$resolve_date = Jira::GetResolveDate($task['key']);
+					$est_in_days = $task['timeoriginalestimate']/(60*60*8)-1;
+					if($est_in_days <= 0)
+						$est_in_days = 1;
+					$obj->started  = date('Y-m-d',strtotime($resolve_date." -".$est_in_days." days"));
+					//echo "M ".$task['key']." ".$resolve_date." ".$est_in_days." ".$obj->started.EOL;
+					$task['worklogs'][0] = $obj;
+					
+					$obj = new Obj();
+					$obj->started = $resolve_date;
+					//echo "M ".$task['key']." ".$obj->started.EOL;
+					
+					$task['worklogs'][1] = $obj;
+					
+					//$task['noestimate'] =  1;
+				}
 				$task['timeoriginalestimate'] = $task['timespent'];
 			}
 			//echo $task['key']."    ".$task['timeoriginalestimate']."<br>";
@@ -338,6 +421,26 @@ class Project {
 		else
 			$task['progress'] = 0;
 	}
+	function ComputeOriginalEstimate(&$task)
+	{
+		if($task['isparent'] == 0)
+		{
+			return $task['timeoriginalestimate'];
+		}
+		if(strlen($task['timeoriginalestimate'])>0)
+			return $task['timeoriginalestimate'];
+		$est = 0;
+		for($i=0;$i<count($task['children']);$i++)
+		{
+			
+			$ntask = &$task['children'][$i];
+			$e = $this->ComputeOriginalEstimate($ntask);
+			//echo $ntask['key']." ".$e.EOL;
+			$est = $est + $e;
+		}
+		$task['oestimate'] = $est/(60*60*8);
+		return $est;
+	}
 	function __construct($structure,$filter,$date=null)
 	{
 		$this->filter = $filter;
@@ -379,11 +482,24 @@ class Project {
 				}
 			}
 		}
-	
+		$est = 0;
 		for($i=0;$i<count($structure->tree);$i++)
 		{
 			
 			$task = &$structure->tree[$i];
+			$e = $this->ComputeOriginalEstimate($task);
+			$task['oestimate'] = $e/(60*60*8);
+			//echo $task['key']." ".$e/(60*60*8).EOL;
+			$est = $est + $e;
+		}
+		
+
+		
+		for($i=0;$i<count($structure->tree);$i++)
+		{
+			
+			$task = &$structure->tree[$i];
+			$this->ComputeLevel($task,1);
 			$this->ComputeEstimate($task);
 			$this->ComputeTimeSpent($task);
 			$this->ComputeProgress($task);
@@ -395,6 +511,10 @@ class Project {
 				$status = "IN PROGRESS";
 			
 			$this->AdjustStartEndDates($task);
+			$this->AdjustStartEndDatesNoWorkedTasks($task,$task['start']);
+			$this->AdjustStartEndDates($task);
+			
+			//echo$task['key']." ".$task['start'].EOL;
 			$starts[] = $task['start'];
 			$ends[] = $task['end'];
 			
@@ -425,10 +545,13 @@ class Project {
 		usort($starts,array( $this, 'datesort' ));
 		usort($ends,array( $this, 'datesort' ));
 		$this->start = $starts[0];
+		//echo $this->start.EOL;
 		$this->end = $ends[count($ends)-1];
+		$this->oestimate = $est/(60*60*8);
 		//echo $this->end.EOL;
 		$this->structure = $structure;
 		//echo "Start=".$this->start." est=".$this->estimate." ts=".$this->timespent." p=".$this->progress." end=".$this->end."\n";
+		//echo $task['key']." ".$task['oestimate'].EOL;
 	}
 }
 ?>

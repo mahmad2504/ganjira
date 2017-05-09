@@ -58,12 +58,11 @@
 }
 
 .progressbar-control .item-bar.green {
-
-   background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#A8CA68), to(#82B530)) !important;
-   background: -webkit-linear-gradient(top, #A8CA68, #82B530) !important;
-   background: -moz-linear-gradient(top, #A8CA68, #82B530) !important;
-   background: -ms-linear-gradient(top, #A8CA68, #82B530) !important;
-   background: -o-linear-gradient(top, #A8CA68, #82B530) !important;
+   background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#00b300), to(#00b300)) !important;
+   background: -webkit-linear-gradient(top, #00b300, #00b300) !important;
+   background: -moz-linear-gradient(top, #00b300, #00b300) !important;
+   background: -ms-linear-gradient(top, #00b300, #00b300) !important;
+   background: -o-linear-gradient(top, #00b300, #00b300) !important;
  
    border:1px solid #000000;
 
@@ -89,6 +88,30 @@
     background: -ms-linear-gradient(top, #FF8000, #FF4000);
     background: -o-linear-gradient(top, #FF8000, #FF4000);
 
+    border:1px solid #000000;
+
+}
+
+.progressbar-control .item-bar.lgreen {
+
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#7FFF00), to(#ffff00));
+    background: -webkit-linear-gradient(top, #7FFF00, #ffff00);
+    background: -moz-linear-gradient(top, #7FFF00, #ffff00);
+    background: -ms-linear-gradient(top, #7FFF00, #ffff00);
+    background: -o-linear-gradient(top, #7FFF00, #ffff00);
+    
+    border:1px solid #000000;
+
+}
+
+.progressbar-control .item-bar.lgrey {
+
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#3cb371), to(#000000));
+    background: -webkit-linear-gradient(top, #3cb371, #000000);
+    background: -moz-linear-gradient(top, #3cb371, #000000);
+    background: -ms-linear-gradient(top, #3cb371, #000000);
+    background: -o-linear-gradient(top, #3cb371, #000000);
+    
     border:1px solid #000000;
 
 }

@@ -1,12 +1,16 @@
 <?php
 require_once('common.php');	
 require_once('project_settings.php');	
-
+require_once('board.php');
 class Graph {
 	private $directory = "";
-	function __construct($project_name)
+	private static $start;
+	private static $end;
+	function __construct($project_name,$start="2011-04-26",$end="2030-01-01")
 	{
 		$this->directory = "projects\\".$project_name."\\archive\\";
+		self::$start = $start;
+		self::$end = date('Y-M-d',strtotime('this friday', strtotime( $end)));
 	}
 	static function ReadDirectory($directory)
 	{
@@ -16,7 +20,10 @@ class Graph {
 		{
 			if(($file != ".") and ($file != "..")) 
 			{
-				$files[] = $directory.$file; // put in array.
+				$file_name =  basename($file, ".xml");
+				
+				if( (strtotime($file_name) >= strtotime(self::$start)) && (strtotime($file_name) <= strtotime(self::$end)))
+					$files[] = $directory.$file; // put in array.
 			}  
 		}
 		natsort($files); // sort.
@@ -54,25 +61,111 @@ class Graph {
 			}
 			return $count;
 		}
-		$start = strtotime($start);
-		$end = strtotime($end);
-		//get the day of the week for start and end dates (0-6)
-		$w = array(date('w', $start), date('w', $end));
+		else if(strtolower($day) == "saturday")
+		{
+			$start = strtotime($start);
+			$end = strtotime($end);
+			$dt = Array ();
+			$count  = 0;
+			for($i=$start; $i<=$end;$i=$i+86400) 
+			{
+				if(date("w",$i) == 6) 
+					$count++;
+			}
+			return $count;
 
-		//get partial week day count
-		if ($w[0] < $w[1])
-		{            
-			$partialWeekCount = ($day >= $w[0] && $day <= $w[1]);
-		}else if ($w[0] == $w[1])
-		{
-			$partialWeekCount = $w[0] == $day;
-		}else
-		{
-			$partialWeekCount = ($day >= $w[0] || $day <= $w[1]);
 		}
+		else if(strtolower($day) == "sunday")
+		{
+			$start = strtotime($start);
+			$end = strtotime($end);
+			$dt = Array ();
+			$count  = 0;
+			for($i=$start; $i<=$end;$i=$i+86400) 
+			{
+				if(date("w",$i) == 0) 
+					$count++;
+			}
+			return $count;
 
-		//first count the number of complete weeks, then add 1 if $day falls in a partial week.
-		return floor( ( $end-$start )/60/60/24/7) + $partialWeekCount;
+		}
+	}
+	function _durationdata($task,&$obj=null)
+	{
+		if($obj==null)
+			$obj = new Obj();
+		
+		//$obj->x =  date("m/d", strtotime((string)$xml->task[0]->pDate));
+		$obj->date =  (string)$task->pDate;
+		$obj->estimate =  (string)$task->pCduration;
+		$obj->oestimate = (string)$task->pEstimateO;
+		//echo $task->pCaption." "; 
+		$obj->timespent = intval($task->pTimeSpent);
+		$obj->timespent = $obj->timespent / (60*60*8);
+		//echo  $obj->timespent.EOL;
+		//echo $task->pName." ".$obj->timespent.EOL;
+		if(substr($obj->estimate, 0, 6 ) == "#style")
+			$obj->estimate=explode(" ",$obj->estimate)[1];
+		
+		if(substr($task->pStartO, 0, 6 ) == "#style")
+			$task->pStartO=explode(" ",$task->pStartO)[1];
+		if(strlen($task->pStartO)>0)
+			$task->pStart = $task->pStartO;
+		if(substr($task->pStart, 0, 6 ) == "#style")
+			$task->pStart=explode(" ",$task->pStart)[1];
+		
+		if(substr($task->pEndO, 0, 6 ) == "#style")
+			$task->pEndO=explode(" ",$task->pEndO)[1];
+		if(strlen($task->pEndO) == 0)
+		{
+			if(substr($task->pEnd, 0, 6 ) == "#style")
+				$task->pEnd=explode(" ",$task->pEnd)[1];
+		}
+		else
+			$task->pEnd = $task->pEndO;
+		
+		//echo $xml->task[0]->pStart."  ".$xml->task[0]->pEnd.EOL;
+		$obj->duration =  (strtotime($task->pEnd) - strtotime($task->pStart))/(60 * 60 * 24);
+		$sats = Graph::CountDays('Saturday',$task->pStart,$task->pEnd);
+		$suns = Graph::CountDays('Sunday',$task->pStart,$task->pEnd);
+		$hols = Graph::CountDays('Holiday',$task->pStart,$task->pEnd);
+		//echo $sats." ".$suns.EOL;
+		$obj->duration = $obj->duration - ($sats + $suns + $hols) + 1;
+		//echo "(".$sats." ".$suns." ".$hols.")	".$obj->duration.EOL;
+		
+		$obj->start = (string) $task->pStart;
+		$obj->end = (string) $task->pEnd;
+		
+		/////////////////////////////////////////////////////////////////
+		$days_spent = (strtotime(date('Y-m-d')) - strtotime($task->pStart))/(60 * 60 * 24);
+		$sats = Graph::CountDays('Saturday',$task->pStart,date('Y-m-d'));
+		$suns = Graph::CountDays('Sunday',$task->pStart,date('Y-m-d'));
+		$hols = Graph::CountDays('Holiday',$task->pStart,date('Y-m-d'));
+		$days_spent = $days_spent - ($sats + $suns + $hols) + 1;
+		
+		$obj->current_velocity = $obj->timespent/$days_spent;
+		//echo $obj->current_velocity.EOL;
+		//$obj->current_velocity = $obj->estimate/$obj->duration;
+		//echo $obj->current_velocity.EOL;
+		//$days_remaining =  $obj->duration - $days_spent;
+		
+		
+		$remaining_estimate = $obj->estimate - $obj->timespent;
+		$remaining_duration = $obj->duration - $days_spent;
+		
+		$obj->required_velocity = $remaining_estimate/$remaining_duration;
+		//echo $obj->timespent." ".$days_spent.EOL;
+		//echo $obj->required_velocity." ".$obj->current_velocity.EOL;
+		//echo $obj->required_velocity." ".$obj->current_velocity.EOL;
+		//echo $remaining_estimate." ".$remaining_duration.EOL;
+		//echo $obj->current_velocity.EOL;
+		//echo $sats.EOL;
+		//echo $days_spent." ".$obj->timespent.EOL;
+		//exit();
+		//$remaning days = $obj->duration - $days_spent;
+		
+		//echo $obj->z.EOL;
+		return $obj;
 	}
 	function GetDurationData($milestone)
 	{
@@ -81,23 +174,137 @@ class Graph {
 		foreach($files as $file) 
 		{
 			//echo $file."<br>";
+			$date =  basename($file, ".xml");
+			$xml = simplexml_load_file($file);
+			if( strtolower($milestone) == 'project')
+			{
+				$xml->task[0]->pDate = $date;
+				$data[]=$this->_durationdata($xml->task[0]);
+			}
+			else
+			{
+				foreach($xml->task as $task)
+				{
+					if(strtoupper($milestone) == strtoupper($task->pCaption))
+					{
+						if(count($data) == 0)
+						{
+							if(strtotime($milestone->start) < strtotime($date))
+							{
+								$obj = $this->_durationdata($task);
+								//var_dump($obj);
+								//$obj = new Obj();
+								
+								$obj->date =  (string)$date;
+								$obj->estimate = $obj->oestimate;
+								$data[] = $obj;
+							}
+						}
+						$task->pDate = $date;
+						$data[]=$this->_durationdata($task);
+						break;
+					}
+				}
+			}
+		}
+		return json_encode($data);
+	}
+	function _velocitydata($task,$compl)
+	{
+		
+		$obj = new Obj();
+		$dur = $this->_durationdata($task);
+		//$obj->date =  (string)$task->pDate;
+		$estimate =  $dur->estimate;
+		$duration = $dur->duration;
+		$timespent = $dur->timespent;
+		$xscale  = round($duration/50);
+		
+		$factor  =  $estimate/$duration;
+		//echo $factor.EOL;
+		if(substr( $task->pComp, 0, 6 ) == "#style")
+		{
+			$firstpart=explode(" ",$task->pComp)[0];
+			$task->pComp = str_replace($firstpart, "", (string)$task->pComp);
+		}
+		$comp = $task->pComp;
+		$start = (string)$dur->start;	
+		$end = (string)$dur->end;
+		$dur->estimate = 0;//$factor;
+		$i=0;
+		$count = 0;
+	    while( strtotime($start ) <=  strtotime($end ))
+		{
+			$obj = new Obj();
+			$obj->date = $start;
+			//	$obj->current = $i;//$dur->estimate;
+			$day = date('D', strtotime( $start));
+			$hols = Graph::CountDays('Holiday',$start,$start);
+			/*
+			if($day == 'Fri')
+				$friday = $start;
+			else
+				$friday = date('Y-M-d',strtotime('next friday', strtotime( $start)));
+			
+			foreach($compl as $cobj)
+			{
+				if(strtotime($friday) == strtotime($cobj->date))
+				{
+					$comp = $cobj->comp;
+					break;
+				}
+				$comp = 0;
+			}*/
+			//echo $start.EOL;
+			
+			if( strtotime(date('Y-m-d')) <	 strtotime($start))
+				$obj->current = 0;
+			else
+			{
+				$obj->current = $timespent;//($comp/100)*$estimate;
+				
+			}
+			//echo $comp.EOL;
+			if(($day == 'Sun')||($day == 'Sat') || ($hols>0))
+			{
+				//$obj->current = $obj->current + 1;
+				//$i = $obj->current;
+			}
+			else
+			{
+				$dur->estimate = $dur->estimate+$factor;
+				
+			}
+			
+			$obj->required = $dur->estimate;// $dur->duration;
+			$obj->current_unmodified = $obj->current;
+			if($obj->current > $obj->required)
+				$obj->current = $obj->required;
+			$start = date('Y-m-d', strtotime($start. ' + 1 day'));
+			//$i = $i + 1;
+			if($count == 0)
+				$data[] =  $obj;
+			$count++;
+			if($count >= $xscale)
+				$count = 0;
+			
+		}
+		return $data;
+	}
+	function GetVelocityData($milestone)
+	{
+		$data = array();
+		$files = $this->ReadDirectory($this->directory);
+		foreach($files as $file) 
+		{
+			$date =  basename($file, ".xml");
 			$xml = simplexml_load_file($file);
 			if( strtolower($milestone) == 'project')
 			{
 				$obj = new Obj();
-				//$obj->x =  date("m/d", strtotime((string)$xml->task[0]->pDate));
-				$obj->x =  (string)$xml->task[0]->pDate;
-				$obj->y =  (string)$xml->task[0]->pCduration;
-				
-				//echo $xml->task[0]->pStart."  ".$xml->task[0]->pEnd.EOL;
-				$obj->z =  (strtotime($xml->task[0]->pEnd) - strtotime($xml->task[0]->pStart))/(60 * 60 * 24);
-				$sats = Graph::CountDays('Saturday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
-				$suns = Graph::CountDays('Sunday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
-				$hols = Graph::CountDays('Holiday',$xml->task[0]->pStart,$xml->task[0]->pEnd);
-				//echo $sats." ".$suns.EOL;
-				$obj->z = $obj->z - ($sats + $suns + $hols);
-				//echo $obj->z.EOL;
-				$data[]=$obj;
+				$obj->date = $date;
+				$obj->comp = $xml->task[0]->pComp;
+				$compl[] = $obj;
 			}
 			else
 			{
@@ -106,17 +313,34 @@ class Graph {
 					if(strtoupper($milestone) == strtoupper($task->pCaption))
 					{
 						$obj = new Obj();
-						//$obj->x =  date("m/d", strtotime((string)$task->pDate));
-						$obj->x =  (string)$xml->task[0]->pDate;
-						$obj->y =  (string)$task->pCduration;
-						$obj->z =  (strtotime($xml->task[0]->pEnd) - strtotime($xml->task[0]->pStart))/(60 * 60 * 24);
-				
-						$data[]=$obj;
+						$obj->date = $date;
+						$obj->comp = $task->pComp;
+						$compl[] = $obj;
 						break;
 					}
 				}
 			}
 		}
+		$date =  basename($file, ".xml");
+		$xml = simplexml_load_file($file);
+		if( strtolower($milestone) == 'project')
+		{
+			$xml->task[0]->pDate = $date;
+			$data=$this->_velocitydata($xml->task[0],$compl);
+		}
+		else
+		{
+			foreach($xml->task as $task)
+			{
+				if(strtoupper($milestone) == strtoupper($task->pCaption))
+				{
+					$task->pDate = $date;
+					$data=$this->_velocitydata($task,$compl);
+					break;
+				}
+			}
+		}
+		
 		return json_encode($data);
 	}
 	/*
@@ -147,14 +371,39 @@ class Graph {
 	}*/
 	function GetMilestones()
 	{
+		global $milestones;
 		$tasks = array();
 		$files = $this->ReadDirectory($this->directory);
 		foreach($files as $file) 
 		{
 		}
 		$xml = simplexml_load_file($file);
+		$i = 0;
 		foreach($xml->task as $task)
 		{
+			$task->pShowMilestone = 0;
+			if($i == 0)
+			{
+				$i++;
+				if($milestones[0] == 'project')
+				{
+					$task->pShowMilestone = 1;
+					$task->pCaption = 'project';
+				}
+			}
+		
+			else
+			{
+				foreach($milestones as $milestone)
+				{
+					if($milestone == $task->pCaption)
+					{
+						$task->pShowMilestone = 1;
+						break;
+					}
+				}
+			}
+			
 			if($task->pShowMilestone==1)
 			{
 				$obj = new Obj();
@@ -178,6 +427,21 @@ class Graph {
 				{
 					$obj->endo = $task->pEnd;
 				}
+				
+				$obj->start = $task->pStart;
+				if(substr( $task->pStart, 0, 6 ) == "#style")
+				{
+					$task->pStart=explode(" ",$task->pStart)[1];
+					$obj->start = $task->pStart;
+				}
+				//echo  "[".$task->pName.$task->pEnd." ". $task->pEndO.EOL;
+				//$task->pEndO = $task->pEnd;
+				$obj->starto = $task->pStartO;
+				if(strlen($task->pStartO) == 0)
+				{
+					$obj->starto = $task->pStart;
+				}
+				
 				$obj->status = $task->pStatus;
 				$tasks[] = $obj;
 				//echo $task->pCaption.EOL;
@@ -187,19 +451,35 @@ class Graph {
 		return $tasks;
 	}
 	
+	static function _progressdata($task)
+	{
+		$obj = new Obj();
+		//$obj->x =  date("m/d", strtotime((string)$xml->task[0]->pDate));
+		$obj->date =  (string)$task->pDate;
+		$obj->progress =  (string)$task->pComp;
+		if(substr($obj->progress, 0, 6 ) == "#style")
+		{
+			$obj->progress=explode(" ",$obj->progress)[1];
+		}
+		return $obj;
+	}
+	
 	function GetProgressData($milestone)
 	{
 		$data = array();
 		$files = $this->ReadDirectory($this->directory);
 		foreach($files as $file) 
 		{
-			//echo $file."<br>";
+			$date =  basename($file, ".xml");
 			$xml = simplexml_load_file($file);
 			
 			if( strtolower($milestone) == 'project')
 			{
+				$xml->task[0]->pDate = $date;
+				$data[]= $this->_progressdata($xml->task[0]);
+				
+				/*
 				$obj = new Obj();
-				//$obj->x =  date("m/d", strtotime((string)$xml->task[0]->pDate));
 				$obj->x =  (string)$xml->task[0]->pDate;
 				
 				$obj->y =  (string)$xml->task[0]->pComp;
@@ -207,27 +487,35 @@ class Graph {
 				if(substr($obj->y, 0, 6 ) == "#style")
 				{
 					$obj->y=explode(" ",$obj->y)[1];
-				}
-				//echo $obj->x ." ".$obj->y.EOL;
-				$data[]=$obj;
+				}*/
 			}
 			else
 			{
 				foreach($xml->task as $task)
 				{
+					$task->pDate = $date;
 					if(strtoupper($milestone) == strtoupper($task->pCaption))
 					{
-						$obj = new Obj();
-						//$obj->x =  date("m/d", strtotime((string)$task->pDate));
-
+						if(count($data) == 0)
+						{
+							if(strtotime($milestone->start) < strtotime($date))
+							{
+								$obj = new Obj();
+								$obj->date =  (string)$date;
+								$obj->progress =  0;
+								$data[] = $obj;
+							}
+						}
+						$data[] = $this->_progressdata($task);
+						
+						/*$obj = new Obj();
 						$obj->x =  (string)$xml->task[0]->pDate;
-						//echo $task->pDate."\n";
 						$obj->y =  (string)$task->pComp;
 						if(substr($obj->y, 0, 6 ) == "#style")
 						{
 							$obj->y=explode(" ",$obj->y)[1];
 						}
-						$data[]=$obj;
+						$data[]=$obj;*/
 						break;
 					}
 				}
@@ -235,6 +523,55 @@ class Graph {
 			
 			
 		}
+		return json_encode($data);
+	}
+	function _enddata($task)
+	{
+		$obj = new Obj();
+		$obj->date =  (string)$task->pDate;
+		$obj->endo =  (string)$task->pEndO;
+		//var_dump($task);
+		$obj->end =  (string)$task->pEnd;
+		
+		if(substr($obj->end, 0, 6 ) == "#style")
+		{
+			$obj->end=explode(" ",$obj->end)[1];
+		}
+		if(substr($obj->endo, 0, 6 ) == "#style")
+		{
+			$obj->endo=explode(" ",$obj->endo)[1];
+		}
+		
+		return $obj;
+	}
+	function GetEndData($milestone)
+	{
+		$data = array();
+		$files = $this->ReadDirectory($this->directory);
+		
+		foreach($files as $file) 
+		{
+			//echo $file.EOL;
+			$xml = simplexml_load_file($file);
+			if( strtolower($milestone) == 'project')
+			{
+				$obj = $this->_enddata($xml->task[0]);
+				$data[] = $obj;
+				
+			}
+			else
+			{
+				foreach($xml->task as $task)
+				{
+					if(strtoupper($milestone) == strtoupper($task->pCaption))
+					{
+						$data[] = $this->_enddata($task);
+						break;
+					}
+				}
+			}
+		}
+		//var_dump($data);
 		return json_encode($data);
 	}
 }

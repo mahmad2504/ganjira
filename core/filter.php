@@ -21,7 +21,7 @@ class Filter {
 		}
 	}
 	
-	function __construct($name,$query)
+	function __construct($name,$query,$cached=0)
 	{
 		$fields = 'key,status,summary,start,end,timeoriginalestimate,timespent,labels,assignee,created,issuetype';
 		$this->query = $query;
@@ -31,7 +31,8 @@ class Filter {
 			$last_update_date = date ("Y/m/d H:i" , filemtime($name));
 			$data = file_get_contents($name);
 			$this->tasks = json_decode( $data );
-			
+			if($cached==1)
+				return;
 			
 			//$jtasks = Jira::Search("key=".$this->key,1,"key,status,timeoriginalestimate,timespent,progress,".JIRA_SCHEDULED_START.",".JIRA_SCHEDULED_END.",".JIRA_AGG_TIME_ORIG_ESTIMATE.",summary,fixVersion,labels,aggregateprogress,labels,assignee");
 			$tasks  = Jira::Search($query." and updated>'".$last_update_date."'",1000,$fields);

@@ -2,14 +2,36 @@
 require_once('common.php');
 //echo date("Y-m-d", strtotime(date('Y')."W01"));
 //echo date('Y');
-if(strlen($date)==0)
-	$date = date('Y-M-d');
 
+if(strlen($date)==0)
+{
+	$date = date('Y-M-d');
+}
+
+
+$date = strtotime($date);
+$day = date('D',$date);
+
+if($day == 'Fri')
+	$date = date('Y-m-d',$date);
+else if($day == 'Sat')
+	$date =  date('Y-m-d', strtotime('previous friday ',$date));
+else if($day == 'Sun')
+	$date =  date('Y-m-d', strtotime('previous friday ',$date));
+else
+	$date =  date('Y-m-d', strtotime('next friday ',$date));
+
+
+
+if(!isset($cached))
+	$cached = 0;
+
+	
 $filtername=FILTER_NAME;
 $query=QUERY;
 $users=USERS_TIMESHEET;
 
-$filter = new Filter($filtername,$query);
+$filter = new Filter($filtername,$query,$cached);
 
 if(strlen($users)>0)
 	$rows = $filter->GetTimeSheet($date,$users);
@@ -40,7 +62,22 @@ for($i=$i;$i>0;$i--)
 	$weeklist[$i] = date("Y-m-d", strtotime(date('Y').$str));
 
 }
-$thisfriday = date('Y-m-d',strtotime('this friday', strtotime( $date)));
+
+
+$date = strtotime($date);
+$day = date('D',$date);
+
+if($day == 'Fri')
+	$thisfriday = date('Y-m-d',$date);
+else if($day == 'Sat')
+	$thisfriday =  date('Y-m-d', strtotime('previous friday ',$date));
+else if($day == 'Sun')
+	$thisfriday =  date('Y-m-d', strtotime('previous friday ',$date));
+else
+	$thisfriday =  date('Y-m-d', strtotime('next friday ',$date));
+
+//echo $thisfriday.EOL;
+//$thisfriday = date('Y-m-d',strtotime('this friday', strtotime( $date)));
 $datafile = 'projects\\'.$project_name.'\\archive\\'.$thisfriday.".xml";
 
 $jsgantt = new JSGantt($datafile);

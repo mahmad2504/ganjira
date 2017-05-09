@@ -137,13 +137,21 @@ class Jira
 	{
 		$curl = self::getcurl();
 		self::resetcurl();
-	
 		$url = JIRA_URL . '/rest/api/latest/' . $resource;
 		curl_setopt($curl, CURLOPT_URL,$url);
 		DebugLog($url);
 		//echo $url;
 		$result = curl_exec($curl);
-		$ch_error = curl_error($curl); if ($ch_error) { trace('error',"$ch_error");} else { DebugLog($result);}
+		$ch_error = curl_error($curl); 
+		if ($ch_error) 
+		{ 
+			echo "Mode:Offline ...".EOL;
+			return;
+		} 
+		else 
+		{ 
+			DebugLog($result);
+		}
 
 		$returnvalue = json_decode($result,true);
 		if(isset($returnvalue["errorMessages"]))
@@ -611,7 +619,7 @@ class Jira
 		//print_r($history);
 		foreach ($history['changelog']['histories'] as $key=>$value) 
 		{
-			echo $value['created']."    "."<br>";
+			//echo $value['created']."    "."<br>";
 			foreach($value['items'] as $k=>&$itm)
 				$itm['created'] = $value['created'];
 			$history_logs[] = $value['items'];
@@ -627,6 +635,18 @@ class Jira
 		}
 		return $history_logs;
 	}
+	static function GetResolveDate($key)
+	{
+		$history = Jira::GetHistory($key);
+		foreach($history as $hostory)
+		{
+			if(($hostory[0]['field'] == 'status')&&($hostory[0]['toString'] == 'Resolved'))
+				return explode('T',$hostory[0]['created'])[0];
+			if(($hostory[0]['field'] == 'status')&&($hostory[0]['toString'] == 'Closed'))
+				return explode('T',$hostory[0]['created'])[0];
+		}
+	}
+
 	static function GetOrigEstimateHistory($key)
 	{
 		$history  = jira::GetHistory($key);

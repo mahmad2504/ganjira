@@ -44,6 +44,10 @@ if($generate_weekly_data==1)
 	$day = date('D');
 	if($day == 'Fri')
 		$friday = date('Y-m-d');
+	else if($day == 'Sat')
+		$friday =  date('Y-m-d', strtotime('previous friday'));
+	else if($day == 'Sun')
+		$friday =  date('Y-m-d', strtotime('previous friday'));
 	else
 		$friday =  date('Y-m-d', strtotime('next friday'));
 

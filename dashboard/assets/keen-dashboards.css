@@ -5,7 +5,7 @@
 
 body.application,
 .keen-dashboard {
-  background: #f2f2f2;
+  background: #2b5876;
   font-family: 'Gotham Rounded SSm A', 'Gotham Rounded SSm B', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   padding: 60px 20px 0;
 }
@@ -38,8 +38,27 @@ body.application hr,
 
 body.application .navbar-inverse,
 .keen-dashboard .navbar-inverse {
-  background-color: #3d4a57;
-  border-color: #333;
+ /* fallback */
+ 
+ 
+  background-color: #2b5876;
+ /* background-image: url(images/linear_bg_1.png);
+  background-repeat: repeat-y;
+
+
+  background: -webkit-gradient(linear, left top, right top, from(#1a82f7), to(#6190E8));
+
+
+  background: -webkit-linear-gradient(left, #2F2727, #6190E8);
+
+
+  background: -moz-linear-gradient(left, #2F2727, #6190E8);
+
+  background: -ms-linear-gradient(left, #2F2727, #6190E8);
+
+
+  background: -o-linear-gradient(left, #2F2727, #6190E8);
+  border-color: #333;*/
 }
 
 body.application .navbar-inverse .navbar-nav > li > a,
@@ -77,9 +96,9 @@ body.application .return-link:hover,
 }
 .chart-wrapper .chart-title {
   border-bottom: 1px solid #d7d7d7;
-  color: #666;
+  color: #000000;
   font-size: 14px;
-  font-weight: 200;
+  font-weight: bold;
   padding: 7px 10px 4px;
 }
 

@@ -53,18 +53,9 @@ class JSGantt {
 	}
 	function TaskJSGanttXML($xml,$task,$id,$pid)
 	{
-		global $milestones;
-		$pShowMilestone=0;
 		$pID=$id;
 	
-		foreach($milestones as $milestone)
-		{
-			if($task['key'] == $milestone)
-			{
-				$pShowMilestone=1;
-				break;
-			}
-		}
+	
 		//// Summary  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$summarystyle = "";
 		$length = 65-($task['level']*3);
@@ -133,7 +124,7 @@ class JSGantt {
 			$end = strtotime($task['end']);
 			if( $today > $end )
 				$style = "#style=color:red ";
-			
+			//echo $task['key']." ".$task['end']." ".$task['end_orig'].EOL;
 			if(strtotime($task['end_orig']) > 0)
 			{
 				if   ( strtotime($task['end']) > strtotime($task['end_orig']))
@@ -253,12 +244,23 @@ class JSGantt {
 		$pStatusO = $task['status_orig'];
 		$pEndO = $task['end_orig'];
 		$pStartO = $task['start_orig'];
-		$pEstimateO = $task['timeoriginalestimate_orig'];
+		
+		if(isset($task['oestimate']))
+			$pEstimateO = $task['oestimate'];
+		else
+			$pEstimateO =0;
+		
+		//echo $task['key']." ".$pEstimateO.EOL;
+		
 		$pTimeSpentO = $task['timespent_orig'];
 		
-		
+		$pEstimate = $task['timeoriginalestimate'];
+		$pTimeSpent = $task['timespent'];
+		$isparent = $task['isparent'];
+		$pLevel = $task['level'];
+			
 		$node = $xml->addChild("task");
-		$node->addChild("pShowMilestone",$pShowMilestone);
+		//$node->addChild("pShowMilestone",$pShowMilestone);
 		$node->addChild("pID",$pID);
 		$node->addChild("pName",$pName);
 		$node->addChild("pStart",$pStart);
@@ -277,11 +279,18 @@ class JSGantt {
 		$node->addChild("pRes",$pRes);
 		$node->addChild("pCaption",$pCaption);
 		$node->addChild("pStatus",$pStatus);
+		$node->addChild("pEstimate",$pEstimate);
+		$node->addChild("pTimeSpent",$pTimeSpent);
+		
+		
 		$node->addChild("pStatusO",$pStatusO);
 		$node->addChild("pEndO",$pEndO);
+		//echo $pEnd." ".$pEndO.EOL;
 		$node->addChild("pStartO",$pStartO);
 		$node->addChild("pEstimateO",$pEstimateO);
 		$node->addChild("pTimeSpentO",$pTimeSpentO);
+		$node->addChild("isparent",$isparent);
+		$node->addChild("pLevel",$pLevel);
 		
 		$ntid = $id+1;
 		foreach($task['children'] as $ntask)
@@ -290,209 +299,9 @@ class JSGantt {
 		}
 		return $ntid;
 	}
-	function TaskJSGanttXML2($xml,$task,$id,$pid)
-	{
-		//for($i=0;$i<$task['level'];$i++)
-		//	echo "   ";
-		$goodjob = -1;
-		$node = $xml->addChild("task");
-		$node->addChild("pID",$id);
-		$length = 65-($task['level']*3);
-		//echo $task['summary']." ".$task['level']." ".$length."\n";
-		//echo substr($task['summary'],0,$length);
-		//if(strlen($task['summary'])> $length)
-		//	$node->addChild("pName","#style=color:red ".substr($task['summary'],0,$length)."...");
-		//else
-		//	$node->addChild("pName",$task['summary']);
-		$node->addChild("pStart",$task['start']);
-		
-		//echo $task['summary']." ".$task['status'];
-		if( (strtoupper($task['status']) != "CLOSED") && (strtoupper($task['status']) != "RESOLVED"))
-		{
-			
-			$today = strtotime(date('Y-M-d'));
-			$end = strtotime($task['end']);
-			if( $today > $end )
-			{
-				//echo " red".EOL;
-				$node->addChild("pEnd","#style=color:red ".$task['end']);
-			}
-			else
-				$node->addChild("pEnd",$task['end']);
-				
-		}
-		else
-			$node->addChild("pEnd",$task['end']);
-		//echo EOL;
-		
-		$node->addChild("pEnd",$task['end']);
-		$node->addChild("pMile",0);
-		//if(($task['status'] == "Resolved")||($task['status'] == "Closed"))
-		//	$node->addChild("pComp",100);
-		//else
-		
-		if($task['issuetype'] == "Requirement")
-		{
-			//$node->addChild("pCduration"," ");
-			$node->addChild("pCduration",round($task['timeoriginalestimate']/(8*60*60),1));
-			if((strtoupper($task['status']) == "CLOSED") || (strtoupper($task['status']) == "RESOLVED"))
-				$node->addChild("pComp","Received");
-			else
-				$node->addChild("pComp","#style=color:red Awaiting");
-		}
-		else
-		{
-			$node->addChild("pComp",round($task['progress']));
-			$dur = round($task['timeoriginalestimate']/(8*60*60),1);
-			if($dur == 0)
-				$node->addChild("pCduration"," ");
-			else
-			{
-				if($task['timeoriginalestimate_orig'] > 0)
-				{
-					if($task['timeoriginalestimate'] > $task['timeoriginalestimate_orig'])
-					{
-						$node->addChild("pCduration","(".$task['timeoriginalestimate_orig']/(8*60*60).") ".round($task['timeoriginalestimate']/(8*60*60),1));
-						$goodjob = 0;
-					}
-					else if($task['timeoriginalestimate'] < $task['timeoriginalestimate_orig'])
-					{
-						$goodjob = 1;
-						$node->addChild("pCduration",round($task['timeoriginalestimate']/(8*60*60),1)." (".$task['timeoriginalestimate_orig']/(8*60*60).")"  );
-					}
-					else
-						$node->addChild("pCduration",round($task['timeoriginalestimate']/(8*60*60),1));
-				}
-				else
-					$node->addChild("pCduration",round($task['timeoriginalestimate']/(8*60*60),1));
-				
-			}
-		}
-		
-		//$node->addChild("pCduration",round($task['timeoriginalestimate']/(8*60*60),1));
-		//$node->addChild("pCduration"," ");
-			$node->addChild("pGroup",$task['isparent']);
-		$node->addChild("pParent",$pid);
-		
-		$node->addChild("pDepend","");
-		$node->addChild("pNotes",WEBLINK.$task['key']);
-		
-		$color="";
-		if($task['isparent'] == 0)// Non group task
-		{
-			if( strtoupper($task['status']) == "IN PROGRESS")
-			{
-				if($task['issuetype'] == "Requirement")
-				{
-					//$node->addChild("pImage","..\\image\\req.png");
-					$today = strtotime(date('Y-M-d'));
-					$end = strtotime($task['end']);
-					if( $today > $end ) // LaTE
-					{
-						$node->addChild("pClass","gtaskred");
-					}
-					else
-						$node->addChild("pClass","gtaskblue");
-				}
-				else
-					$node->addChild("pClass","gtaskgreen");
-			}
-			if((strtoupper($task['status']) == "CLOSED") || (strtoupper($task['status']) == "RESOLVED"))
-			{
-					if($goodjob == 1)
-					{
-						//$node->addChild("pImage","..\\image\\thumbup_grey.png");
-					}
-				//if($task['issuetype'] == "Requirement")
-					//$node->addChild("pImage","..\\image\\req-met.png");
-					$node->addChild("pClass","gtaskcomplete");
-			}
-			else
-			{
-				//if($task['issuetype'] == "Requirement")
-				//	$node->addChild("pImage","..\\image\\req.png");
-				
-				if($task['progress'] > 0)
-				{
-					$node->addChild("pClass","gtaskyellow");
-				}
-				else
-				{
-					$node->addChild("pClass","gtaskopen");
-				}
-			}
-		}
-		else
-		{
-			$label_found = 0;
-			if($task['level'] == 3)
-			{
-				$node->addChild("pOpen",0);
-				$label_found = 1;
-			}
-			else
-			{
-				foreach($task['labels'] as $label)
-				{
-					if(strtolower($label) == "gantt_show_closed")
-					{
-						$node->addChild("pOpen",0);
-						$label_found = 1;
-						break;
-					}
-				}
-			}
-			if($label_found)
-			{
-				
-			}
-			else
-			{
-				if($task['status'] == "RESOLVED")
-					$node->addChild("pOpen",0);
-				else 
-					$node->addChild("pOpen",1);
-			}
-		}
 	
-		
-		$color = $this->GetColor($task['status']);
-		
-			
-		if(strlen($task['summary'])> $length)
-			$node->addChild("pName","#style=color:".$color." ".substr($task['summary'],0,$length)."...");
-		else
-			$node->addChild("pName","#style=color:".$color." ".$task['summary']);
-		
-		$node->addChild("pLink",WEBLINK.$task['key']);
-		
-		if($task['isparent'])
-			$node->addChild("pRes","");
-		else
-		{
-			if($task['issuetype'] == "Requirement")
-				$node->addChild("pRes","Requirement");
-			else
-				$node->addChild("pRes",$task['assignee']);
-		}
-		$node->addChild("pCaption",$task['key']);
-		$node->addChild("pStatus",$task['status_orig']);
-		$node->addChild("pEnd",$task['end_orig']);
-		$node->addChild("pStart",$task['start_orig']);
-		$node->addChild("pEstimate",$task['timeoriginalestimate_orig']);
-		$node->addChild("pTimeSpent", $task['timespent_orig']);
-		//echo $id." ".$task['key']." ".$pid."\n";
-		$ntid = $id+1;
-		foreach($task['children'] as $ntask)
-		{
-			
-			$ntid=$this->TaskJSGanttXML($xml,$ntask,$ntid,$id);
-		}
-		return $ntid;
-	}
 	function Save($date=null)
 	{
-		global $milestones;
 		if($date == null)
 			$date = date('Y-m-d');
 		
@@ -501,17 +310,7 @@ class JSGantt {
 		
 		$id = 1;
 		$pid = 0;
-		$pShowMilestone=0;
-		
-		foreach($milestones as $milestone)
-		{
-			if(strtolower($milestone)=='project')
-			{
-				$pShowMilestone=1;
-				break;
-			}
-		}
-		
+	
 		$node = $xml->addChild("task");
 		$node->addChild("pID",$id);
 		$color = $this->GetColor($this->project->status);
@@ -541,11 +340,13 @@ class JSGantt {
 		$node->addChild("pOpen",1);	
 		$node->addChild("pDepend","");
 		$node->addChild("pNotes","");
-		$node->addChild("pShowMilestone",$pShowMilestone);
+		//$node->addChild("pShowMilestone",$pShowMilestone);
 		$node->addChild("pCduration",round($this->project->estimate/(8*60*60)));
 		
-		
-		
+		$node->addChild("pEstimate",$this->project->estimate);
+		$node->addChild("pTimeSpent",$this->project->timespent);
+		$node->addChild("pEstimateO",$this->project->oestimate);
+		$node->addChild("pLevel",0);
 		$ntid = $id+1;
 		//echo $id." "."None"." ".$pid."\n";
 		foreach($this->project->structure->tree as $task)

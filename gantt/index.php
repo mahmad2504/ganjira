@@ -86,9 +86,26 @@ a:link, a:visited, a:active {
 
 <script type="text/javascript">
 <?php
+	function week_date($week, $year){
+		$date = new DateTime();
+		$wdate = $date->setISODate($year, $week, "1")->format('Y-m-d');
+		$friday =  date('Y-m-d', strtotime('next friday ',strtotime($wdate)));
+		return $friday; 
+	}
+	
+	
    require_once('../core/pparse.php');
    $datafile = '"../projects/'.$project.'/gantt?V=1"';
+   if(isset($week))
+   {
+	   $week = explode("W",$week);
+	  $date = week_date($week[1],'20'.$week[0]);
+	  $datafile = '"../projects/'.$project.'/archive/'.$date.'.xml?V=1"';
+   }
+   if(!isset($collapse))
+	   $collapse = -1;
 ?>
+    var collapse = <?php echo  $collapse?>;
     var datafile = <?php echo  $datafile?>;
 	var g = new JSGantt.GanttChart(document.getElementById('GanttChartDIV'), 'day' );
 
@@ -102,7 +119,7 @@ a:link, a:visited, a:active {
 		//g.setShowRes('false');
 		g.setDateTaskDisplayFormat('dd month yyyy HH:MI');
 		// use the XML file parser
-		JSGantt.parseXML(datafile,g)
+		JSGantt.parseXML(datafile,g,collapse);
 
 		g.Draw();
 	} else {

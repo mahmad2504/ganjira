@@ -10,13 +10,11 @@ define('PROJECT_LAYOUT',JIRA_STRUCTURE);
 
 define('TITLE','Serial Driver Revamp');
 
-$milestones[] = 'project';
-$milestones[] = 'BSP-8362';
-$milestones[] = 'BSP-8370';
-$milestones[] = 'BSP-8375';
 
+$BOARD1 ='BSP-8362';
+$DEFAULT_BOARD = $BOARD1;
 
-$project_status = 0;
+//$project_status = 0;
 
 ?>
 
