@@ -12,8 +12,9 @@ define('PROJECT_CALENDAR','6');
 define('PROJECT_VELOCITY_GRAPH','7');
 define('PROJECT_GANTT','8');
 define('PROJECT_VELOCITY_GAUGE','9');
-
-
+$quiet=true;
+if(isset($update))
+	include 'core/buildgantt.php';
 	
 $graph = new Graph($project_name);
 $milestones = $graph->GetMilestones();
@@ -160,6 +161,7 @@ function GetProgressData($graph,$milestone)
 function PanelHeader()
 {
 	global $milestones;
+	global $project_name;
 	$project = $milestones[0];
 	$data = $project->progress;
 	//echo '<span style="color:red;float:right;"';
@@ -173,28 +175,35 @@ function PanelHeader()
 	//echo '<span style="color:red;" id="required_velocity"></span>';
 	
 	//echo '</span>';
+	$url = $project_name."?summary=progress&update=true";
 	
-	echo '<a  style="float:left;" class="navbar-brand" href="../gantt/".$project_name>';
-		
-	echo $project->name."&nbsp&nbsp&nbsp";
+	echo '<a  style="float:left;" class="navbar-brand" href="'.$url.'">';
+	echo '<img style="float:left;" border="0" alt="Update" src="assets/update.png" width="20" height="20">';
+	echo "&nbsp".$project->name."&nbsp&nbsp&nbsp";
 	echo '</a>';
+	//echo '<a  style="float:left;" class="navbar-brand" href="'.$url.'">';
+		
+	//echo $project->name."&nbsp&nbsp&nbsp";
+	//echo '</a>';
+	return ;
+
 		
 	echo '<a  style="color:Lime;float:left;font-size:150%" class="navbar-brand" href="#">';
 	echo $data->tw_progress.'%&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp';   
 	echo '</a>';
 	if($data->tw_progress > 0)
 	{
-		if($data->img == 'down.png')
-		{
-			echo '<img src="assets/down.png" alt="Smiley face" height="20" width="15" style="position: relative;top:+16px;float:left;">';
-			echo '<a  style="color:red;float:left;" class="navbar-brand" href="#">';
-		}
-		else
-		{
-			echo '<img src="assets/up_light.png" alt="Smiley face" height="20" width="15" style="position: relative;top:+14px;float:left;">';
-			echo '<a  style="color:Lime;float:left;" class="navbar-brand" href="#">';
-		}
-		echo "&nbsp".$data->diff_progress.'%';  
+	if($data->img == 'down.png')
+	{
+		echo '<img src="assets/down.png" alt="Smiley face" height="20" width="15" style="position: relative;top:+16px;float:left;">';
+		echo '<a  style="color:red;float:left;" class="navbar-brand" href="#">';
+	}
+	else
+	{
+		echo '<img src="assets/up_light.png" alt="Smiley face" height="20" width="15" style="position: relative;top:+14px;float:left;">';
+		echo '<a  style="color:Lime;float:left;" class="navbar-brand" href="#">';
+	}
+	echo "&nbsp".$data->diff_progress.'%';  
 	}
 	echo '</a>';
 }
@@ -277,16 +286,16 @@ function PanelBody($number)
 					echo '<td>';
 						if($data->tw_progress > 0)
 						{
-							if($data->img == 'down.png')
-							{
-								echo '<img src="assets/down.png" alt="Smiley face" height="15" width="15" style="position: relative;top:+3px;float:left;">';
-								echo '<a  style="color:red;position: relative;top:+0px;float:left;" href="#">';
-							}
-							else
-							{
-								echo '<img src="assets/up.png" alt="Smiley face" height="15" width="15" style="position: relative;top:+1px;float:left;">';
-								echo '<a  style="color:green;position: relative;top:+0px;float:left;" href="#">';
-							}
+						if($data->img == 'down.png')
+						{
+							echo '<img src="assets/down.png" alt="Smiley face" height="15" width="15" style="position: relative;top:+3px;float:left;">';
+							echo '<a  style="color:red;position: relative;top:+0px;float:left;" href="#">';
+						}
+						else
+						{
+							echo '<img src="assets/up.png" alt="Smiley face" height="15" width="15" style="position: relative;top:+1px;float:left;">';
+							echo '<a  style="color:green;position: relative;top:+0px;float:left;" href="#">';
+						}
 							echo "&nbsp".$data->diff_progress.'%';
 						}
 						echo '</a>';
@@ -469,20 +478,20 @@ function PanelBody($number)
 			if($enteries > 1)
 			{
 				$pwdata = $project->finish[$enteries-2];
-				if(strlen($tw_end_data->endo) > 0)
-				{
+			if(strlen($tw_end_data->endo) > 0)
+			{
 					$endo = date('F jS Y', strtotime($pwdata->endo));
 					echo '<span class="datefont" style="float:left;">Last Week - '.$endo.'</span>';
 				}	
-				else
-				{
+			else
+			{
 					$end = date('F jS Y', strtotime($pwdata->end));
 					echo '<span class="datefont" style="float:left;">Last Week - '.$end.'</span>';
-				}
+			}
 			}
 			if(strlen($tw_end_data->endo) == 0) // No deadline , then it is already displayed
 			{
-				
+			
 			}
 			else
 			{
@@ -586,8 +595,18 @@ function GeneratePanelHtml($number,$class='col-sm-4')
 </head>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <body class="application">
-	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<?php
+	$factor = $dur_data->required_velocity/2;
+	if( $dur_data->current_velocity <= $factor)
+		$color = '#ff0000';
+	else if( ($dur_data->current_velocity >= $factor)&&($dur_data->current_velocity < $factor*2))
+		$color = '#f49542';
+	else
+		$color = '#33a01b';
 		
+	
+	echo '<div style="background-color: '.$color.';" class="navbar navbar-inverse navbar-fixed-top" role="navigation">';
+?>
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<?php PanelHeader();?>
@@ -601,7 +620,7 @@ function GeneratePanelHtml($number,$class='col-sm-4')
 		<?php 
 		if(!isset($summary))
 			$summary = '0';
-		
+	
 		if($summary==1)
 		{
 			GeneratePanelHtml(PROJECT_PROGRESS_STATUS,'col-sm-4');
@@ -615,15 +634,14 @@ function GeneratePanelHtml($number,$class='col-sm-4')
 		}
 		else if( $summary=='progress')
 		{
-		//	echo $summary.EOL;
 			GeneratePanelHtml(PROJECT_PROGRESS_STATUS,'col-sm-12');
 		}
 		else 
 		{
-			GeneratePanelHtml(PROJECT_PROGRESS_STATUS,'col-sm-3');
-			GeneratePanelHtml(PROJECT_PROGRESS_GRAPH,'col-sm-3');
-			GeneratePanelHtml(PROJECT_ESTIMATE_GRAPH,'col-sm-3');
-			GeneratePanelHtml(PROJECT_GANTT,'col-sm-3');
+		GeneratePanelHtml(PROJECT_PROGRESS_STATUS,'col-sm-3');
+		GeneratePanelHtml(PROJECT_PROGRESS_GRAPH,'col-sm-3');
+		GeneratePanelHtml(PROJECT_ESTIMATE_GRAPH,'col-sm-3');
+		GeneratePanelHtml(PROJECT_GANTT,'col-sm-3');
 		}
 		?>
 	</div>
@@ -641,11 +659,11 @@ function GeneratePanelHtml($number,$class='col-sm-4')
 		{ }
 		else
 		{
-			GeneratePanelHtml(PROJECT_MILESTONE_STATUS);
-			GeneratePanelHtml(PROJECT_VELOCITY_GRAPH,'col-sm-5');
-			GeneratePanelHtml(PROJECT_CALENDAR,'col-sm-3');
+		GeneratePanelHtml(PROJECT_MILESTONE_STATUS);
+		GeneratePanelHtml(PROJECT_VELOCITY_GRAPH,'col-sm-5');
+		GeneratePanelHtml(PROJECT_CALENDAR,'col-sm-3');
 		}
-		?>
+	?>
 	</div>
 	<div class="row">
 		<?php 
@@ -654,43 +672,24 @@ function GeneratePanelHtml($number,$class='col-sm-4')
 			
 		}
 		else if($summary==2)
-		{
+                {
 			
-		}
+                }
 		else if($summary=='progress')
 		{ }
-		else
-			GeneratePanelHtml(PROJECT_JIRA_TASKS,'col-sm-5');
+                else
+		GeneratePanelHtml(PROJECT_JIRA_TASKS,'col-sm-5');
 		
 		?>
 	</div>
-
-	
-    <div class="row">
-      <div class="col-sm-3">
+	    <div class="row">
+        <div class="col-sm-3">
         <div class="chart-wrapper">
-         
+			
         </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="chart-wrapper">
-        
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="chart-wrapper">
-          
-        </div>
-      </div>
-      <div class="col-sm-3">
-        <div class="chart-wrapper">
-        
-        </div>
-      </div>
-	       
-    </div>
-
-
+         </div>    
+         </div>
+		
   </div>
 
 	<script type="text/javascript">
@@ -822,7 +821,7 @@ function GeneratePanelHtml($number,$class='col-sm-4')
 		$options['legend'] = 'none';
 		$options['pointSize'] = 3;
 		$hAxis = array();
-		
+			
 			
 		$hAxis['format'] = 'MM/dd';
 		$vAxis = array();

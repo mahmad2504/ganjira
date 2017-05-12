@@ -4,16 +4,22 @@ require_once('project_settings.php');
 
 $filtername=FILTER_NAME;
 $query=QUERY;
-echo "Updating Jira data".EOL;
+if(!isset($quiet))
+     echo "Updating Jira data".EOL;
+ 
 flushout();
 $data = new Filter($filtername,$query);
 
+//if(isset($quiet))
+	
+	
 //$KEY = 'MEH-2773';
 //print_r($filter->tasks->$KEY);
 
 
 if(PROJECT_LAYOUT == JIRA_STRUCTURE)
 {
+	if(!isset($quiet))
 	echo "Reading Jira structure".EOL;
 	flushout();
 	$layout = new Structure(PROJECT_LAYOUT);
@@ -21,6 +27,7 @@ if(PROJECT_LAYOUT == JIRA_STRUCTURE)
 else
 {
 	$layout = new Gan(GAN_FILE);
+	if(!isset($quiet))
 	echo "Reading Layout from ".GAN_FILE." ".EOL;
 	
 }
@@ -60,5 +67,6 @@ if($generate_weekly_data==1)
 $gan = new Gan(GAN_FILE);
 $gan->Save($project);
 //$project->SaveJSGanttXML("gantt\\data");
-echo "Done";
+if(!isset($quiet))
+	echo "Done";
 ?>

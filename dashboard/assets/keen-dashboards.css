@@ -41,7 +41,7 @@ body.application .navbar-inverse,
  /* fallback */
  
  
-  background-color: #2b5876;
+ /* background-color: #2b5876;*/
  /* background-image: url(images/linear_bg_1.png);
   background-repeat: repeat-y;
 
@@ -65,7 +65,7 @@ body.application .navbar-inverse .navbar-nav > li > a,
 body.application .navbar .navbar-brand,
 .keen-dashboard .navbar-inverse .navbar-nav > li > a,
 .keen-dashboard .navbar .navbar-brand {
-  color: #fbfbfb;
+  color: #000000;
   text-decoration: none;
 }
 

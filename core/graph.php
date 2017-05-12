@@ -124,7 +124,9 @@ class Graph {
 		else
 			$task->pEnd = $task->pEndO;
 		
-		//echo $xml->task[0]->pStart."  ".$xml->task[0]->pEnd.EOL;
+		//var_dump($task);
+		//echo $task->pCaption." ".$task->pName." ".$task->pStart."  ".$task->pEnd.EOL;
+		//exit();
 		$obj->duration =  (strtotime($task->pEnd) - strtotime($task->pStart))/(60 * 60 * 24);
 		$sats = Graph::CountDays('Saturday',$task->pStart,$task->pEnd);
 		$suns = Graph::CountDays('Sunday',$task->pStart,$task->pEnd);
@@ -152,8 +154,12 @@ class Graph {
 		
 		$remaining_estimate = $obj->estimate - $obj->timespent;
 		$remaining_duration = $obj->duration - $days_spent;
-		
+		//echo "Rest=".$remaining_estimate." Rdur=".$remaining_duration," ".EOL;
+		//exit();
+		if($remaining_duration == 0)
+			$remaining_duration = 1;
 		$obj->required_velocity = $remaining_estimate/$remaining_duration;
+		//echo "CVelocity = ".$obj->current_velocity." RVelocity=".$obj->required_velocity.EOL;
 		//echo $obj->timespent." ".$days_spent.EOL;
 		//echo $obj->required_velocity." ".$obj->current_velocity.EOL;
 		//echo $obj->required_velocity." ".$obj->current_velocity.EOL;
@@ -171,6 +177,7 @@ class Graph {
 	{
 		$data = array();
 		$files = $this->ReadDirectory($this->directory);
+		//echo $milestone.EOL;
 		foreach($files as $file) 
 		{
 			//echo $file."<br>";
@@ -186,7 +193,7 @@ class Graph {
 				foreach($xml->task as $task)
 				{
 					if(strtoupper($milestone) == strtoupper($task->pCaption))
-					{
+					{				
 						if(count($data) == 0)
 						{
 							if(strtotime($milestone->start) < strtotime($date))
